@@ -135,7 +135,7 @@
 	        window.location.href = "#running";
 
 	        var pdftex = new PDFTeX("texlive.js/pdftex-worker.js");
-	        pdftex.set_TOTAL_MEMORY(800*1024*1024).then(function() {
+	        pdftex.set_TOTAL_MEMORY(80*1024*1024).then(function() {
 	          //pdftex.FS_createLazyFile('/', 'snowden.jpg', 'snowden.jpg', true, true);
 
 	          pdftex.on_stdout = appendOutput;
