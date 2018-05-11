@@ -8,7 +8,7 @@
 	<script src="promisejs/promise.js"></script>
 	<script src="texlive.js/pdftex.js"></script>
 	
-	<p>Manual timestamp: 11/5/18 22:52:27</p>
+	<p>Manual timestamp: 11/5/18 22:53:57</p>
 	
 	<h2>
 		Usage
@@ -193,7 +193,7 @@
 						//Compile
 						freader = new FileReader();
 						freader.onload = function () {
-							var freader1 = newFileReader();
+							var freader1 = new FileReader();
 							freader1.onload = function() {
 								compile(freader.result, [freader1.result], [fileArray[0].name]);
 							};
