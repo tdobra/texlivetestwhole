@@ -52,6 +52,7 @@
 /texmf-dist/tex/latex/amsmath/.
 /texmf-dist/tex/latex/natbib/.
 /texmf-dist/tex/latex/dvipdfmx-def/.
+/texmf-dist/tex/latex/xcolor/.
 /texmf-dist/tex/latex/pslatex/.
 /texmf-dist/tex/latex/latexconfig/.
 /texmf-dist/tex/latex/etex-pkg/.
@@ -143,6 +144,7 @@
 /texmf-dist/tex/generic/babel/.
 /texmf-dist/tex/generic/bibtex/.
 /texmf-dist/tex/generic/ifxetex/.
+/texmf-dist/tex/generic/xcolor/.
 /texmf-dist/tex/generic/dvips/.
 /texmf-dist/tex/generic/enctex/.
 /texmf-dist/web2c/.
@@ -802,6 +804,7 @@
 /texmf-dist/tex/latex/natbib/bibentry.sty
 /texmf-dist/tex/latex/natbib/natbib.sty
 /texmf-dist/tex/latex/dvipdfmx-def/dvipdfmx.def
+/texmf-dist/tex/latex/xcolor/xcolor.sty
 /texmf-dist/tex/latex/pslatex/pslatex.sty
 /texmf-dist/tex/latex/latexconfig/latex.ini
 /texmf-dist/tex/latex/latexconfig/lualatexquotejobname.tex
@@ -2076,6 +2079,10 @@
 /texmf-dist/tex/generic/bibtex/apalike.sty
 /texmf-dist/tex/generic/bibtex/apalike.tex
 /texmf-dist/tex/generic/ifxetex/ifxetex.sty
+/texmf-dist/tex/generic/xcolor/xcolor1.tex
+/texmf-dist/tex/generic/xcolor/xcolor3.tex
+/texmf-dist/tex/generic/xcolor/xcolor2.tex
+/texmf-dist/tex/generic/xcolor/xcolor4.tex
 /texmf-dist/tex/generic/dvips/colordvi.tex
 /texmf-dist/tex/generic/dvips/blackdvi.sty
 /texmf-dist/tex/generic/dvips/rotate.tex

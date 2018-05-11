@@ -2320,6 +2320,7 @@ knuth-lib
 oberdiek
 pdftex
 pgf
+xcolor
 
 ./tex/generic/babel:
 UKenglish.sty
@@ -3644,6 +3645,12 @@ pgfutil-context.def
 pgfutil-latex.def
 pgfutil-plain.def
 
+./tex/generic/xcolor:
+xcolor1.tex
+xcolor2.tex
+xcolor3.tex
+xcolor4.tex
+
 ./tex/latex:
 ae
 amscls
@@ -3674,6 +3681,7 @@ psnfss
 pspicture
 tools
 url
+xcolor
 
 ./tex/latex/ae:
 ae.sty
@@ -4397,6 +4405,9 @@ xspace.sty
 
 ./tex/latex/url:
 url.sty
+
+./tex/latex/xcolor:
+xcolor.sty
 
 ./tex/luatex:
 hyph-utf8
