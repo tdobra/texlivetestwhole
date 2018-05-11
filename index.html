@@ -8,7 +8,7 @@
 	<script src="promisejs/promise.js"></script>
 	<script src="texlive.js/pdftex.js"></script>
 	
-	<p>Manual timestamp: 11/5/18 22:06:10</p>
+	<p>Manual timestamp: 11/5/18 22:14:55</p>
 	
 	<h2>
 		Usage
@@ -138,8 +138,8 @@
 			showLoadingIndicator(true);
 			window.location.href = "#running";
 
-			var pdftex = new PDFTeX("texlive.js/pdftex-worker.js");
-			pdftex.set_TOTAL_MEMORY(80*1024*1024).then(function() {
+			// var pdftex = new PDFTeX("texlive.js/pdftex-worker.js");
+// 			pdftex.set_TOTAL_MEMORY(80*1024*1024).then(function() {
 				//pdftex.FS_createLazyFile('/', 'snowden.jpg', 'snowden.jpg', true, true);
 
 				pdftex.on_stdout = appendOutput;
@@ -160,7 +160,7 @@
 					document.getElementById("open_pdf_btn").href = pdf_dataurl;
 					document.getElementById("open_pdf_btn").focus();
 				});
-			});
+			// });
 		}
 
 		document.getElementById("compile").addEventListener("click", function(e) {
@@ -168,45 +168,47 @@
 			var source_code, promiseArray, freader;
 			var freader = new FileReader();
 			var fileArray = [document.getElementById("resourceFile1").files[0], document.getElementById("resourceFile2").files[0], document.getElementById("resourceFile3").files[0]];
-					
-			//Load each resource file
-			//pdftex.FS_createLazyFile('/', 'snowden.jpg', 'snowden.jpg', true, true);
-			//Read them using promises
-			promiseArray = fileArray.map(function(fileobj) {
-				return new Promise(function(resolve, reject) {
-					var filename = fileobj.name;
-					var freader = new FileReader();
-					freader.onload = function() {
-						pdftex.FS_createDataFile('/', filename, freader.result, true, false);
-						resolve();
-					};
-					freader.onerror = reject;
-					freader.readAsArrayBuffer(fileobj);
-				});
-				Promise.all(promiseArray).then(function(result) {
-					//Compile
-					freader = new FileReader();
-					freader.onload = function () {
-						compile(freader.result);
-					};
-					freader.readAsText(document.getElementById("LaTeXFile").files[0]);
-				}).catch(function(msg) {
-					alert("Error reading file: " + msg);
-					//Return buttons to normal state
-					startBtn.disabled = false;
-					abortReadBtn.disabled = true;
-				});
+			
+			var pdftex = new PDFTeX("texlive.js/pdftex-worker.js");
+			pdftex.set_TOTAL_MEMORY(80*1024*1024).then(function() {					
+				//Load each resource file
+				//pdftex.FS_createLazyFile('/', 'snowden.jpg', 'snowden.jpg', true, true);
+				//Read them using promises
+				promiseArray = fileArray.map(function(fileobj, pdftex) {
+					return new Promise(function(resolve, reject) {
+						var filename = fileobj.name;
+						var freader = new FileReader();
+						freader.onload = function() {
+							pdftex.FS_createDataFile('/', filename, freader.result, true, false);
+							resolve();
+						};
+						freader.onerror = reject;
+						freader.readAsArrayBuffer(fileobj);
+					});
+					Promise.all(promiseArray).then(function(result) {
+						//Compile
+						freader = new FileReader();
+						freader.onload = function () {
+							compile(freader.result);
+						};
+						freader.readAsText(document.getElementById("LaTeXFile").files[0]);
+					}).catch(function(msg) {
+						alert("Error reading file: " + msg);
+						//Return buttons to normal state
+						startBtn.disabled = false;
+						abortReadBtn.disabled = true;
+					});
 					
 
+				});
 			});
-
 			// document.getElementById("open_pdf_btn").addEventListener("click", function(e) {
 				// 	        window.open(pdf_dataurl);
 				// 	        e.preventDefault();
-		});
+			});
 
-		var pdftex_preload = new PDFTeX("texlive.js/pdftex-worker.js");
-		pdftex_preload = undefined;
-	</script>
-</body>
-</html>
+			var pdftex_preload = new PDFTeX("texlive.js/pdftex-worker.js");
+			pdftex_preload = undefined;
+			</script>
+		</body>
+		</html>
