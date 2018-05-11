@@ -5,178 +5,208 @@
 	<title>TrailO Timed Control Map Cards Generator</title>
 </head>
 <body>
-  <script src="promisejs/promise.js"></script>
-  <script src="texlive.js/pdftex.js"></script>
+	<script src="promisejs/promise.js"></script>
+	<script src="texlive.js/pdftex.js"></script>
 	
-	<p>Manual timestamp: 11/5/18 21:35:55</p>
+	<p>Manual timestamp: 11/5/18 22:06:10</p>
 	
-	    <h2>
-	      Usage
-	    </h2>
-	    <code style="width: 55em; margin: 0 auto; padding: 1em; display: block">
-	      <span class="keyword">var</span> pdftex = <span class="keyword">new</span> PDFTeX();<br />
-	      <span class="keyword">var</span> latex_code = <span class="string">""</span> + <br />
-	      <span class="string">&nbsp;&nbsp;"\\documentclass{article}"</span> + <br />
-	      <span class="string">&nbsp;&nbsp;"\\begin{document}"</span> + <br />
-	      <span class="string">&nbsp;&nbsp;"\\LaTeX is great!"</span> + <br />
-	      <span class="string">&nbsp;&nbsp;"$E = mc^2$"</span> + <br />
-	      <span class="string">&nbsp;&nbsp;"\\end{document}"</span>;
-	      <br /><br />
-	      pdftex.compile(latex_code)<br />
-	        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.then(<span class="keyword">function</span>(pdf) {
-	        window.open(pdf)
-	      });
-	    </code>
+	<h2>
+		Usage
+	</h2>
+	<code style="width: 55em; margin: 0 auto; padding: 1em; display: block">
+		<span class="keyword">var</span> pdftex = <span class="keyword">new</span> PDFTeX();<br />
+		<span class="keyword">var</span> latex_code = <span class="string">""</span> + <br />
+		<span class="string">&nbsp;&nbsp;"\\documentclass{article}"</span> + <br />
+		<span class="string">&nbsp;&nbsp;"\\begin{document}"</span> + <br />
+		<span class="string">&nbsp;&nbsp;"\\LaTeX is great!"</span> + <br />
+		<span class="string">&nbsp;&nbsp;"$E = mc^2$"</span> + <br />
+		<span class="string">&nbsp;&nbsp;"\\end{document}"</span>;
+		<br /><br />
+		pdftex.compile(latex_code)<br />
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.then(<span class="keyword">function</span>(pdf) {
+			window.open(pdf)
+		});
+	</code>
 
-	    <div id="tabs">
-	      <div class="tab" id="tab_input">
-	        <h2>
-	          Demo
-	        </h2>
-	        <h3>
-	          LaTeX Input
-	        </h3>
-	        <button id="compile" autofocus>Compile this LaTeX code to a PDF</button>
+	<div id="tabs">
+		<div class="tab" id="tab_input">
+			<h2>
+				Demo
+			</h2>
+			<h3>
+				LaTeX Input
+			</h3>
+			<button id="compile" autofocus>Compile this LaTeX code to a PDF</button>
 
-					<p>Input LaTeX<input id="LaTeXFile" type="file" accept="*.tex" /></p>
+			<p>Input LaTeX<input id="LaTeXFile" type="file" accept="*.tex" /></p>
+			<p>Resource file 1<input id="resourceFile1" type="file" /></p>
+			<p>Resource file 2<input id="resourceFile2" type="file" /></p>
+			<p>Resource file 3<input id="resourceFile3" type="file" /></p>
 
-	        <button onclick="TogetherJS(this); return false;">Start Collaboration Mode</button>
-	        <textarea rows="30" id="input">
-	\documentclass[12pt]{article}
-\usepackage[a4paper,portrait,margin=1cm]{geometry}
-\usepackage{graphicx}
-\usepackage{tikz}
-\usepackage{rotating}
-\usepackage{anyfontsize}
-\usepackage{forloop}
+			<button onclick="TogetherJS(this); return false;">Start Collaboration Mode</button>
+			<textarea rows="30" id="input">
+				\documentclass[12pt]{article}
+				\usepackage[a4paper,portrait,margin=1cm]{geometry}
+				\usepackage{graphicx}
+				\usepackage{tikz}
+				\usepackage{rotating}
+				\usepackage{anyfontsize}
+				\usepackage{forloop}
 
-\usepackage{amsmath}
+				\usepackage{amsmath}
 
-	\title{\TeX live.js}
-	\author{Created by Manuel Sch\"olling}
-	\date{\today}
-	\begin{document}
-	  \maketitle
-	  \TeX{}live.js is a compiler for the \TeX{}
-	  typesetting program created using Mozilla's Emscripten
-	  Compiler. It offers programmable desktop
-	  publishing features and extensive facilities for
-	  automating most aspects of typesetting and desktop
-	  publishing, including numbering and cross-referencing,
-	  tables and figures, page layout, bibliographies, and
-	  much more. It supports \LaTeX{} which was originally written 
-	  in 1984 by Leslie Lamport and has become the dominant method for
-	  using \TeX;
+				\title{\TeX live.js}
+				\author{Created by Manuel Sch\"olling}
+				\date{\today}
+				\begin{document}
+				\maketitle
+				\TeX{}live.js is a compiler for the \TeX{}
+				typesetting program created using Mozilla's Emscripten
+				Compiler. It offers programmable desktop
+				publishing features and extensive facilities for
+				automating most aspects of typesetting and desktop
+				publishing, including numbering and cross-referencing,
+				tables and figures, page layout, bibliographies, and
+				much more. It supports \LaTeX{} which was originally written 
+				in 1984 by Leslie Lamport and has become the dominant method for
+				using \TeX;
  
-	  % This is a comment, not shown in final output.
-	  % The following shows typesetting power of LaTeX:
-	  \begin{align}
-	    E_0 &= mc^2                              \\
-	    E &= \frac{mc^2}{\sqrt{1-\frac{v^2}{c^2}}}
-	  \end{align}
+				% This is a comment, not shown in final output.
+				% The following shows typesetting power of LaTeX:
+				\begin{align}
+				E_0 &= mc^2                              \\
+				E &= \frac{mc^2}{\sqrt{1-\frac{v^2}{c^2}}}
+				\end{align}
 
 
-	  \TeX{}live.js even supports images! This photo was taken by Laura Poitras/Praxis Films
+				\TeX{}live.js even supports images! This photo was taken by Laura Poitras/Praxis Films
 
-	  %\includegraphics[height=5cm, keepaspectratio]{snowden}
-	\end{document}
-	        </textarea>
-	      </div>
+				%\includegraphics[height=5cm, keepaspectratio]{snowden}
+				\end{document}
+			</textarea>
+		</div>
 
 
-	      <div class="tab" id="tab_output">
-	        <h3>Console Output</h3>
+		<div class="tab" id="tab_output">
+			<h3>Console Output</h3>
 
-	        <pre id="output" style="overflow: scroll; max-height: 300px">
-	        Click "Compile this LaTeX code to PDF" at the top of this page and watch the console output here.
-	        </pre>
+			<pre id="output" style="overflow: scroll; max-height: 300px">
+				Click "Compile this LaTeX code to PDF" at the top of this page and watch the console output here.
+			</pre>
 
-	        <a name="running" id="running" style="display: none">
-	          Compiling…
-	        </a>
-	      </div>
+			<a name="running" id="running" style="display: none">
+				Compiling…
+			</a>
+		</div>
 
-	      <div class="tab" id="tab_open_pdf" style="display: none">
-	        <h3>View your PDF</h3>
+		<div class="tab" id="tab_open_pdf" style="display: none">
+			<h3>View your PDF</h3>
 
-	        <a id="open_pdf_btn" download="maps.pdf">Open your PDF</a>
-	        <p>
-	          Your LaTeX code is now compiled to a PDF document. The document is converted to a <a href="https://developer.mozilla.org/en-US/docs/data_URIs">data URI</a> that makes it possible to interpret the format correctly.
-	        </p>
-	        <a name="open_pdf"></a>
-	      </div>
+			<a id="open_pdf_btn" download="maps.pdf">Open your PDF</a>
+			<p>
+				Your LaTeX code is now compiled to a PDF document. The document is converted to a <a href="https://developer.mozilla.org/en-US/docs/data_URIs">data URI</a> that makes it possible to interpret the format correctly.
+			</p>
+			<a name="open_pdf"></a>
+		</div>
 
-	    </div>
+	</div>
 
-	    <script>
-	      var visibilityChanger = function(element_id) {
-	        return function(visible) {
-	          document.getElementById(element_id).style.display = visible ? 'block' : 'none';
-	        }
-	      }
+	<script>
+		var visibilityChanger = function(element_id) {
+			return function(visible) {
+				document.getElementById(element_id).style.display = visible ? 'block' : 'none';
+			}
+		}
 
-	      var showLoadingIndicator = visibilityChanger("running")
-	      var showOpenButton = visibilityChanger("tab_open_pdf")
+		var showLoadingIndicator = visibilityChanger("running")
+		var showOpenButton = visibilityChanger("tab_open_pdf")
 
-	      var appendOutput = function(msg) {
-	        var output = document.getElementById("output");
+		var appendOutput = function(msg) {
+			var output = document.getElementById("output");
 
-	        var content = output.textContent;
+			var content = output.textContent;
 
-	        output.textContent = content + "\r\n" + msg;
+			output.textContent = content + "\r\n" + msg;
 
-	        output.scrollTop = 999999;
-	        console.log(msg);
-	      }
+			output.scrollTop = 999999;
+			console.log(msg);
+		}
 
-	      var pdf_dataurl = undefined;
-	      var compile = function(source_code) {
-	        document.getElementById("output").textContent = "";
-	        showLoadingIndicator(true);
-	        window.location.href = "#running";
+		var pdf_dataurl = undefined;
+		var compile = function(source_code) {
+			document.getElementById("output").textContent = "";
+			showLoadingIndicator(true);
+			window.location.href = "#running";
 
-	        var pdftex = new PDFTeX("texlive.js/pdftex-worker.js");
-	        pdftex.set_TOTAL_MEMORY(80*1024*1024).then(function() {
-	          //pdftex.FS_createLazyFile('/', 'snowden.jpg', 'snowden.jpg', true, true);
+			var pdftex = new PDFTeX("texlive.js/pdftex-worker.js");
+			pdftex.set_TOTAL_MEMORY(80*1024*1024).then(function() {
+				//pdftex.FS_createLazyFile('/', 'snowden.jpg', 'snowden.jpg', true, true);
 
-	          pdftex.on_stdout = appendOutput;
-	          pdftex.on_stderr = appendOutput;
+				pdftex.on_stdout = appendOutput;
+				pdftex.on_stderr = appendOutput;
 
-	          console.time("Execution time");
+				console.time("Execution time");
 
-	          pdftex.compile(source_code).then(function(pdf_dataurl) {
-	            console.timeEnd("Execution time");
+				pdftex.compile(source_code).then(function(pdf_dataurl) {
+					console.timeEnd("Execution time");
 
-	            showLoadingIndicator(false);
+					showLoadingIndicator(false);
 
-	            if (pdf_dataurl === false)
-	              return;
+					if (pdf_dataurl === false)
+						return;
 
-	            showOpenButton(true);
-	            window.location.href = "#open_pdf";
-							document.getElementById("open_pdf_btn").href = pdf_dataurl;
-	            document.getElementById("open_pdf_btn").focus();
-	          });
-	        });
-	      }
+					showOpenButton(true);
+					window.location.href = "#open_pdf";
+					document.getElementById("open_pdf_btn").href = pdf_dataurl;
+					document.getElementById("open_pdf_btn").focus();
+				});
+			});
+		}
 
-	      document.getElementById("compile").addEventListener("click", function(e) {
-	        //var source_code = document.getElementById("input").value;
-					var source_code;
+		document.getElementById("compile").addEventListener("click", function(e) {
+			//var source_code = document.getElementById("input").value;
+			var source_code, promiseArray, freader;
+			var freader = new FileReader();
+			var fileArray = [document.getElementById("resourceFile1").files[0], document.getElementById("resourceFile2").files[0], document.getElementById("resourceFile3").files[0]];
+					
+			//Load each resource file
+			//pdftex.FS_createLazyFile('/', 'snowden.jpg', 'snowden.jpg', true, true);
+			//Read them using promises
+			promiseArray = fileArray.map(function(fileobj) {
+				return new Promise(function(resolve, reject) {
+					var filename = fileobj.name;
 					var freader = new FileReader();
+					freader.onload = function() {
+						pdftex.FS_createDataFile('/', filename, freader.result, true, false);
+						resolve();
+					};
+					freader.onerror = reject;
+					freader.readAsArrayBuffer(fileobj);
+				});
+				Promise.all(promiseArray).then(function(result) {
+					//Compile
+					freader = new FileReader();
 					freader.onload = function () {
 						compile(freader.result);
 					};
 					freader.readAsText(document.getElementById("LaTeXFile").files[0]);
-	      });
+				}).catch(function(msg) {
+					alert("Error reading file: " + msg);
+					//Return buttons to normal state
+					startBtn.disabled = false;
+					abortReadBtn.disabled = true;
+				});
+					
 
-	      // document.getElementById("open_pdf_btn").addEventListener("click", function(e) {
-// 	        window.open(pdf_dataurl);
-// 	        e.preventDefault();
-// 	      });
+			});
 
-	      var pdftex_preload = new PDFTeX("texlive.js/pdftex-worker.js");
-	      pdftex_preload = undefined;
-	    </script>
+			// document.getElementById("open_pdf_btn").addEventListener("click", function(e) {
+				// 	        window.open(pdf_dataurl);
+				// 	        e.preventDefault();
+		});
+
+		var pdftex_preload = new PDFTeX("texlive.js/pdftex-worker.js");
+		pdftex_preload = undefined;
+	</script>
 </body>
 </html>
