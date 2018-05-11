@@ -3664,6 +3664,7 @@ latexconfig
 ltxmisc
 mflogo
 mfnfss
+ms
 natbib
 oberdiek
 pdftex-def
@@ -4029,6 +4030,9 @@ uyfrak.fd
 uygoth.fd
 uyinit.fd
 uyswab.fd
+
+./tex/latex/ms:
+everyshi.sty
 
 ./tex/latex/natbib:
 bibentry.sty

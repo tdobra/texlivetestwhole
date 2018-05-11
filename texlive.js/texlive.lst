@@ -28,6 +28,7 @@
 /texmf-dist/tex/latex/.
 /texmf-dist/tex/latex/fix2col/.
 /texmf-dist/tex/latex/tools/.
+/texmf-dist/tex/latex/ms/.
 /texmf-dist/tex/latex/colortbl/.
 /texmf-dist/tex/latex/oberdiek/.
 /texmf-dist/tex/latex/ae/.
@@ -413,6 +414,7 @@
 /texmf-dist/tex/latex/tools/somedefs.sty
 /texmf-dist/tex/latex/tools/thp.sty
 /texmf-dist/tex/latex/tools/xspace.sty
+/texmf-dist/tex/latex/ms/everyshi.sty
 /texmf-dist/tex/latex/.DS_Store
 /texmf-dist/tex/latex/colortbl/colortbl.sty
 /texmf-dist/tex/latex/oberdiek/zref-runs.sty
