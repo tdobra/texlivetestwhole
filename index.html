@@ -8,7 +8,7 @@
 	<script src="promisejs/promise.js"></script>
 	<script src="texlive.js/pdftex.js"></script>
 	
-	<p>Manual timestamp: 11/5/18 22:32:22</p>
+	<p>Manual timestamp: 11/5/18 22:37:54</p>
 	
 	<h2>
 		Usage
@@ -188,6 +188,7 @@
 						freader.readAsDataURL(fileobj);
 					});
 					Promise.all(promiseArray).then(function(result) {
+						console.log("Resources read")
 						//Compile
 						freader = new FileReader();
 						freader.onload = function () {
