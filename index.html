@@ -8,7 +8,7 @@
 	<script src="promisejs/promise.js"></script>
 	<script src="texlive.js/pdftex.js"></script>
 	
-	<p>Manual timestamp: 11/5/18 22:45:15</p>
+	<p>Manual timestamp: 11/5/18 22:52:27</p>
 	
 	<h2>
 		Usage
@@ -133,14 +133,15 @@
 		}
 
 		var pdf_dataurl = undefined;
-		var compile = function(source_code) {
+		var compile = function(source_code, resourceURLs, resourceNames) {
 			document.getElementById("output").textContent = "";
 			showLoadingIndicator(true);
 			window.location.href = "#running";
 
 			var pdftex = new PDFTeX("texlive.js/pdftex-worker.js");
  			pdftex.set_TOTAL_MEMORY(80*1024*1024).then(function() {
-				pdftex.FS_createLazyFile('/', 'snowden.jpg', 'snowden.jpg', true, true);
+				//pdftex.FS_createLazyFile('/', 'snowden.jpg', 'snowden.jpg', true, true);
+				pdftex.FS_createLazyFile('/', resourceNames[0], resourceURLs[0], true, true);
 
 				pdftex.on_stdout = appendOutput;
 				pdftex.on_stderr = appendOutput;
@@ -192,7 +193,11 @@
 						//Compile
 						freader = new FileReader();
 						freader.onload = function () {
-							compile(freader.result);
+							var freader1 = newFileReader();
+							freader1.onload = function() {
+								compile(freader.result, [freader1.result], [fileArray[0].name]);
+							};
+							freader1.readAsDataURL(fileArray[0]);
 						};
 						freader.readAsText(document.getElementById("LaTeXFile").files[0]);
 					// }).catch(function(msg) {
