@@ -7,7 +7,7 @@
 %
 % See the file doc/generic/pgf/licenses/LICENSE for more details.
 
-\ProvidesPackage{pgfpages}[2011/01/05 ver 0.02]
+\ProvidesPackage{pgfpages}[2004/11/05 ver 0.01]
 
 \RequirePackage{pgfcore,calc}
 
@@ -790,11 +790,10 @@
         \else%
           \pgflowlevel{\pgftransformyscale{\csname pgfpages@p@\the\pgf@cpn @yscale\endcsname}}%
         \fi%
-        \pgfscope%
         \expandafter\ifx\csname pgfpages@p@\the\pgf@cpn @rotation\endcsname\relax%
+          \pgfscope%
         \else%
-        \pgflowlevel{\pgftransformrotate{\csname
-            pgfpages@p@\the\pgf@cpn @rotation\endcsname}}%
+          \pgflowlevel{\pgftransformrotate{\csname pgfpages@p@\the\pgf@cpn @rotation\endcsname}}%
         \fi%
         \pgfutil@tempdima=\csname pgfpages@p@\the\pgf@cpn @width\endcsname\relax%
         \pgfutil@tempdimb=\csname pgfpages@p@\the\pgf@cpn @height\endcsname\relax%
@@ -856,14 +855,11 @@
     \@parboxrestore%
     \pgfpages@originalshipout%
     \vbox{\hbox{%
-        \pgfsetupphysicalpagesizes%
-        \hskip-1in%
-        \vbox to \pgfphysicalheight{%
-          \vss\box\pgfpages@shipoutbox%
-          \vskip1in%
-        }}%
-      \pgfsetupphysicalpagesizes%
-    }%
+      \hskip-1in%
+      \vbox to \pgfphysicalheight{%
+        \vss\box\pgfpages@shipoutbox%
+        \vskip1in%
+      }}}%
   \endgroup%
 }
 
@@ -900,13 +896,8 @@
 % \pgfhookintoshipout
 
 \newcommand\pgfhookintoshipout{
-  \ifx\CROP@shipout\undefined
-    \let\pgfpages@originalshipout=\shipout
-    \let\shipout=\pgfpages@interceptshipout
-  \else
-    \let\pgfpages@originalshipout=\CROP@shipout
-    \let\CROP@shipout=\pgfpages@interceptshipout
-  \fi
+  \let\pgfpages@originalshipout=\shipout
+  \let\shipout=\pgfpages@interceptshipout
 }
 
 \def\pgfpages@interceptshipout{%
@@ -1014,15 +1005,37 @@
 % \pgfsetupphysicalpagesizes
 
 \newcommand\pgfsetupphysicalpagesizes{%
-  \pgfsys@global@papersize{\the\pgfphysicalwidth}{\the\pgfphysicalheight}%
+  % The following code was send to me by Rolf Niepraschk
+    \ifx\Gin@driver\pgfutil@empty\else%
+      \filename@parse{\Gin@driver}\@tempswafalse%
+      \def\reserved@a{dvips}%
+      \ifx\filename@base\reserved@a\@tempswatrue\fi%
+      \def\reserved@a{dvipdfm}%
+      \ifx\filename@base\reserved@a\@tempswatrue\fi%
+      \if@tempswa%
+        \AtBeginDvi{%
+          \special{papersize=\the\pgfphysicalwidth,\the\pgfphysicalheight}}%
+      \fi%
+      \def\reserved@a{pdftex}%
+      \ifx\filename@base\reserved@a
+        \pdfpagewidth\pgfphysicalwidth\pdfpageheight\pgfphysicalheight%
+      \fi%
+      \def\reserved@a{vtex}%
+      \ifx\filename@base\reserved@a
+        \mediawidth\pgfphysicalwidth\mediaheight\pgfphysicalheight%
+      \fi%
+    \fi
 }
 
 
 %
 % Start/End setup
 %
-\pgfhookintoshipout
-
+\AtBeginDocument
+{
+  \pgfhookintoshipout
+  \pgfsetupphysicalpagesizes
+}
 \AtEndDocument
 {
   \clearpage

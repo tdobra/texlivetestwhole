@@ -7,7 +7,7 @@
 %
 % See the file doc/generic/pgf/licenses/LICENSE for more details.
 
-\ProvidesFileRCS $Header: /cvsroot/pgf/pgf/generic/pgf/systemlayer/pgfsys-dvips.def,v 1.25 2014/07/09 14:01:22 cfeuersaenger Exp $
+\ProvidesFileRCS $Header: /cvsroot/pgf/pgf/generic/pgf/systemlayer/pgfsys-dvips.def,v 1.20 2008/04/03 17:04:45 tantau Exp $
 
 % Driver commands for dvips
 
@@ -52,12 +52,7 @@
 \def\pgfsys@imagesuffixlist{.epsi:.eps:.ps:}
 
 \def\pgfsys@papersize#1#2{%
- \special{papersize=#1,#2}%
- % \expandafter\gdef\expandafter\pgfsys@atbegindocument\expandafter{\pgfsys@atbegindocument\special{papersize=#1,#2}}%
-}
-\def\pgfsys@prepare@papersize#1#2{%
- \expandafter\gdef\expandafter\pgfsys@atbegindocument\expandafter{\pgfsys@atbegindocument\special{papersize=#1,#2}}%
-}
+  \expandafter\gdef\expandafter\pgfsys@atbegindocument\expandafter{\pgfsys@atbegindocument\special{papersize=#1,#2}}}
 
 \expandafter\gdef\expandafter\pgfsys@atbegindocument\expandafter{\pgfsys@atbegindocument%
   \pgf@sys@postscript@header{
@@ -79,9 +74,10 @@
     /pgfpd{/delta globaldict /pgfdelta get def}bind def % put delta
     /.setopacityalpha where {pop} {/.setopacityalpha{pop}def} ifelse % install .setopacityalpha 
     /.pgfsetfillopacityalpha{/pgffoa exch def
-      /pgffill{gsave pgffoa .setopacityalpha fill 1 .setopacityalpha newpath fill grestore newpath}bind def
-      /pgfeofill{gsave pgffoa .setopacityalpha eofill 1 .setopacityalpha newpath eofill grestore newpath}bind def}bind def
-    /.pgfsetstrokeopacityalpha{/pgfsoa exch def /pgfstr{gsave pgfsoa .setopacityalpha stroke grestore newpath}bind def}bind def
+      /pgffill{gsave pgffoa .setopacityalpha fill 1 .setopacityalpha newpath fill grestore}bind def
+      /pgfeofill{gsave pgffoa .setopacityalpha eofill 1 .setopacityalpha newpath eofill grestore}bind def}bind def
+    /.pgfsetstrokeopacityalpha{/pgfsoa exch def
+      /pgfstr{gsave pgfsoa .setopacityalpha stroke grestore}bind def}bind def
     /pgffoa 1 def
     /pgfsoa 1 def
     end
@@ -105,13 +101,12 @@
 \def\pgfsys@markposition#1{%
   \pdfsavepos%
   \edef\pgf@temp{#1}%
-  \expandafter\pgfutil@writetoaux\expandafter{%
+  \expandafter\write\expandafter\pgfutil@auxout\expandafter{%
     \expandafter\noexpand\expandafter\pgfsyspdfmark\expandafter{\pgf@temp}{\the\pdflastxpos}{\the\pdflastypos}}%
 }
 
 \def\pgfsyspdfmark#1#2#3{%
   \expandafter\gdef\csname pgf@sys@pdf@mark@pos@#1\endcsname{\pgfqpoint{#2sp}{#3sp}}%
-  \pgfutil@check@rerun{#1}{{#2}{#3}}%
 }
 
 \def\pgfsys@getposition#1#2{%

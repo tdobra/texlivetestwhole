@@ -191,10 +191,6 @@
 	% #1: the coordinate system name (*without* the leading brace).
 	% The leading brace must be re-inserted by this style.
 	/codeexample/prettyprint/point with cs/.code 2 args={(#1:#2},%
-	%
-	% The font / color command to use for comments. Will be set at
-        % the beginning of a comment
-	/codeexample/prettyprint/comment font/.initial=,%
 	% the same with specialised code:
 	%/codeexample/prettyprint/point with cs/<CS NAME>/.code 2 args={(#1:#2},%
 	%
@@ -289,12 +285,12 @@
 % 
 \def\pgfmanual@pretty@installcommenthandler{%
 	\expandafter\def\pgfmanual@pretty@activepercent{%
-		\begingroup%
+		\begingroup
 		\pgfmanualprettycommentactivetrue
 		\expandafter\let\pgfmanual@pretty@activenl=\pgfmanual@pretty@recoveraftercomment
 		\expandafter\def\pgfmanual@pretty@activepercent{\%}%
-		\pgfkeysvalueof{/codeexample/prettyprint/comment font}%\tt 
-		\%%
+		%\tt 
+		\% %
 	}%
 }%
 \def\pgfmanual@pretty@recoveraftercomment{%
@@ -360,7 +356,7 @@
 		\let\pgfmanual@pretty@mainloop@NEXT=\relax
 	\else
 		\ifpgfmanualprettycommentactive
-			#1\kern0pt%
+			#1%
 		\else
 			\ifx\pgfmanual@loc@TMPa\pgfmanual@pretty@lbracket%
 				% we found the start of OPTIONS '[ ... ]'.
@@ -871,7 +867,7 @@
 	\else
 		\def\pgfmanual@pretty@pgfkeys@loop@NEXT{\pgfmanual@pretty@pgfkeys@loop}%
 		\ifpgfmanualprettycommentactive
-			#1\kern0pt%
+			#1%
 		\else
 			\ifnum13=\catcode`#1
 				% we found a white space (space, TAB or NL) or comment

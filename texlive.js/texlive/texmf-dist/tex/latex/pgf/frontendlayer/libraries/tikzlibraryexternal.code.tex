@@ -22,20 +22,8 @@
 % It replaces \tikzpicture/ \endtikzpicture and \tikz and invokes \beginpgfgraphicnamed ... \endpgfgraphicnamed
 % commands if necessary.
 
-% load this package in order to get \pdf@mdfivesum .
-% \pdf@mdfivesum is available for pdftex and lualatex and computes the
-% md5 sum. Note that pdftex has \pdfmdfivesum, but lualatex does not
-% have it.
-%
-% ... also used for \pdf@shellescape.
-\usepackage{pdftexcmds}
-
 % source generic implementation:
 \input tikzexternalshared.code.tex
-
-\pgfutil@IfUndefined{pdf@mdfivesum}{}{%
-	\let\tikzexternal@mdfivesum=\pdf@mdfivesum
-}%
 
 \def\tikzexternal@TEXDIALECT@begpicture{\begin{tikzpicture}}
 \def\tikzexternal@TEXDIALECT@endpicture{\end{tikzpicture}}%
@@ -64,7 +52,6 @@
 			\noexpand\endgroup
 			\noexpand#1{\the\t@tikzexternal@tmpa}%
 		}%
-		\t@tikzexternal@tmpa={}% release memory.
 	\else
 		\t@tikzexternal@tmpa=\expandafter{\the\t@tikzexternal@tmpa #2\end{#3}}%
 		\def\tikzexternal@TEXDIALECT@collectpicture@next{%
@@ -74,30 +61,8 @@
 }%
 \def\tikzexternal@laTeX@collect@until@end@tikzpicturetikzpicturestring{tikzpicture}%
 
-\def\tikzexternal@handle@landscape{%
-	\ltx@ifpackageloaded{pdflscape}{%
-		% Work around a bug in conjunction with pdflscape and
-		% external: without this optimize-away-instruction, the
-		% externalized image would be rotated - and it will be rotated
-		% once more again when it is included.
-		%
-		% if we "optimize it away", the landscape stuff will be
-		% omitted. I hope this is enough... might not be entirely
-		% fool-proof; perhaps we need to set it to \relax. For now, it
-		% will probably do the job
-		\tikzset{
-			external/.cd,
-			optimize command away=\landscape,
-			optimize command away=\endlandscape
-		}%
-	}{%
-	}%
-}%
-
 \AtBeginDocument{%
 	\pgfutil@ifundefined{tikzexternalrealjob}{%
 		\global\let\tikzexternalrealjob=\jobname
 	}{}%
-	\tikzexternal@handle@landscape
 }%
-

@@ -7,7 +7,7 @@
 %
 % See the file doc/generic/pgf/licenses/LICENSE for more details.
 
-\ProvidesFileRCS $Header: /cvsroot/pgf/pgf/generic/pgf/basiclayer/pgfcoretransformations.code.tex,v 1.20 2015/08/07 10:17:34 cfeuersaenger Exp $
+\ProvidesFileRCS $Header: /cvsroot/pgf/pgf/generic/pgf/basiclayer/pgfcoretransformations.code.tex,v 1.11 2009/06/10 09:22:57 ludewich Exp $
 
 
 % Position transformations
@@ -57,15 +57,15 @@
 %
 % \pgfsettransformentries\aa\ab\ba\bb\shiftx\shifty
 \def\pgfgettransformentries#1#2#3#4#5#6{%
-  \edef#1{\pgf@pt@aa}%
-  \edef#2{\pgf@pt@ab}% attention: this is (1,0), i.e. the point which is usually labelled 'ba'!
-  \edef#3{\pgf@pt@ba}% attention: this is (0,1), i.e. the point which is usually labelled 'ab'!
-  \edef#4{\pgf@pt@bb}%
-  \edef#5{\the\pgf@pt@x}%
-  \edef#6{\the\pgf@pt@y}%
+	\edef#1{\pgf@pt@aa}%
+	\edef#2{\pgf@pt@ab}%
+	\edef#3{\pgf@pt@ba}%
+	\edef#4{\pgf@pt@bb}%
+	\edef#5{\the\pgf@pt@x}%
+	\edef#6{\the\pgf@pt@y}%
 }%
 \def\pgfsettransformentries#1#2#3#4#5#6{%
-  \pgfsettransform{{#1}{#2}{#3}{#4}{#5}{#6}}%
+	\pgfsettransform{{#1}{#2}{#3}{#4}{#5}{#6}}%
 }%
 
 % Restore the current transformation matrix from a macro.
@@ -97,8 +97,6 @@
 
 \def\pgf@idmatrixtext{1.0,0.0,0.0,1.0}
 \def\pgf@zerozerotext{0.0,0.0}
-\def\pgf@one@text{1.0}
-\def\pgf@zero@text{0.0}
 
 % Transformation command
 %
@@ -275,6 +273,41 @@
 }
 
 
+% Add a pre-morph
+%
+% #1 = morphing code
+%
+% Description:
+%
+% This function adds code to the pre-morphing list. When a
+% coordinate is transformed, the current pre-morphing code is
+% called first. Then the transformation matrix is applied. Finally, all
+% post-morphing code is called. The morphing list is local to the
+% current TeX group.
+%
+% The job of the #1 macro is to modify the values of \pgf@x and
+% \pgf@y. It should not have any other sideeffects.
+%
+% Example:
+%
+% \pgfmorphaddmorph{\advance\pgf@x by 1cm\relax}
+
+\def\pgfmorphaddpre#1{\expandafter\def\expandafter\pgfmorph@prelist\expandafter{\pgfmorph@prelist#1}}
+\let\pgfmorph@prelist=\pgfutil@empty
+
+
+% Add a post-morph
+%
+% #1 = morphing macro
+%
+% Description:
+%
+% The only difference to the pre-morphs is that post morphs are
+% executed after the transformation matrix has been applied.
+
+\def\pgfmorphaddpost#1{\expandafter\def\expandafter\pgfmorph@postlist\expandafter{\pgfmorph@postlist#1}}
+\let\pgfmorph@postlist=\pgfutil@empty
+
 
 % Transformation into a given triangle. The three corners of the
 % triangle are called "origin", "x" and "y" are given. After this
@@ -319,10 +352,10 @@
 \def\pgftransformreset{%
   \pgf@pt@x=0pt%
   \pgf@pt@y=0pt%
-  \let\pgf@pt@aa\pgf@one@text%
-  \let\pgf@pt@ba\pgf@zero@text%
-  \let\pgf@pt@ab\pgf@zero@text%
-  \let\pgf@pt@bb\pgf@one@text%
+  \def\pgf@pt@aa{1.0}%
+  \def\pgf@pt@ba{0.0}%
+  \def\pgf@pt@ab{0.0}%
+  \def\pgf@pt@bb{1.0}%
   \pgf@pt@identitytrue%
 }
 
@@ -334,10 +367,10 @@
 % \pgftansformreset
 
 \def\pgftransformresetnontranslations{%
-  \let\pgf@pt@aa\pgf@one@text%
-  \let\pgf@pt@ba\pgf@zero@text%
-  \let\pgf@pt@ab\pgf@zero@text%
-  \let\pgf@pt@bb\pgf@one@text%
+  \def\pgf@pt@aa{1.0}%
+  \def\pgf@pt@ba{0.0}%
+  \def\pgf@pt@ab{0.0}%
+  \def\pgf@pt@bb{1.0}%
   \pgf@pt@identitytrue%
 }
 
@@ -352,9 +385,9 @@
 %
 % \pgftansformshift{\pgfpoint{1cm}{1cm}}
 
-\def\pgftransformshift#1{\pgftransformcm{1}{0}{0}{1}{#1}}
-\def\pgftransformxshift#1{\pgftransformcm{1}{0}{0}{1}{\pgfpoint{#1}{+0pt}}}
-\def\pgftransformyshift#1{\pgftransformcm{1}{0}{0}{1}{\pgfpoint{+0pt}{#1}}}
+\def\pgftransformshift#1{\pgftransformcm{1.0}{0}{0}{1.0}{#1}}
+\def\pgftransformxshift#1{\pgftransformcm{1.0}{0}{0}{1.0}{\pgfpoint{#1}{0pt}}}
+\def\pgftransformyshift#1{\pgftransformcm{1.0}{0}{0}{1.0}{\pgfpoint{0pt}{#1}}}
 
 
 
@@ -454,71 +487,25 @@
 % }
 %
 \def\pgftransformlineattime#1#2#3{%
-  \pgf@process{#2}%
-  \pgf@xb=\pgf@x% xb/yb = start point
-  \pgf@yb=\pgf@y%
-  \pgf@process{#3}%
-  \pgf@xc=\pgf@x% xc/yc = end point
-  \pgf@yc=\pgf@y%
-  \pgftransformshift{\pgfpointlineattime{#1}{\pgfqpoint{\pgf@xb}{\pgf@yb}}{\pgfqpoint{\pgf@xc}{\pgf@yc}}}%
+  \pgftransformshift{\pgfpointlineattime{#1}{#2}{#3}}%
   \ifpgfresetnontranslationattime%
     \pgftransformresetnontranslations%
   \fi%
   \ifpgfslopedattime%
-    \advance\pgf@xc by-\pgf@xb%
-    \advance\pgf@yc by-\pgf@yb%
+    \pgf@process{#2}%
+    \pgf@xa=\pgf@x% xb/yb = start point
+    \pgf@ya=\pgf@y%
+    \pgf@process{#3}%
+    \advance\pgf@x by-\pgf@xa%
+    \advance\pgf@y by-\pgf@ya%
     \ifpgfallowupsidedownattime%
     \else%
-      \ifdim\pgf@xc<0pt%   
-        \pgf@xc=-\pgf@xc%
-        \pgf@yc=-\pgf@yc%
-      \fi%
-    \fi%
-    \pgf@x=\pgf@xc%
-    \pgf@y=\pgf@yc%
-    \pgfpointnormalised{}% x/y = normalised vector
-    \pgf@ya=-\pgf@y%
-    \pgftransformcm%
-    {\pgf@sys@tonumber{\pgf@x}}{\pgf@sys@tonumber{\pgf@y}}%
-    {\pgf@sys@tonumber{\pgf@ya}}{\pgf@sys@tonumber{\pgf@x}}{\pgfpointorigin}%
-  \fi%
-}
-
-
-% Transform to the coordinate system of a point on an arc
-%
-% #1 = a time fraction of line where to put the label, where 0 means start,
-%      1 means end, and for example 0.5 means the middle.
-% #2 = center of an ellipse
-% #3 = 0-degree axis of the ellipse
-% #4 = 90-degree axis of the ellipse
-% #4 = start angle of the arc on this ellipse
-% #5 = end angle of the arc on this ellipse
-%
-% Example:
-%
-% {
-%   \pgftransformlineattime{.5}{\pgfpoint{1cm}{1cm}}{\pgfpoint{1cm}{0cm}}{\pgfpoint{0cm}{1cm}}{30}{40}
-%   \pgftext{Hi!}
-% }
-
-\def\pgftransformarcaxesattime#1#2#3#4#5#6{%
-  \pgfpointarcaxesattime{#1}{#2}{#3}{#4}{#5}{#6}%        
-  \pgftransformshift{\pgfqpoint{\pgf@x}{\pgf@y}}%
-  \ifpgfresetnontranslationattime%
-    \pgftransformresetnontranslations%
-  \fi%
-  \ifpgfslopedattime%
-    \pgf@x=\pgf@xa%
-    \pgf@y=\pgf@ya%
-    \pgf@process{\pgfpointnormalised{}}%
-    \ifpgfallowupsidedownattime%
-    \else%
-      \ifdim\pgf@x<0pt%
+      \ifdim\pgf@x<0pt%   
         \pgf@x=-\pgf@x%
         \pgf@y=-\pgf@y%
       \fi%
     \fi%
+    \pgfpointnormalised{}% x/y = normalised vector
     \pgf@ya=-\pgf@y%
     \pgftransformcm%
     {\pgf@sys@tonumber{\pgf@x}}{\pgf@sys@tonumber{\pgf@y}}%
@@ -592,8 +579,8 @@
 % \pgftransformarrow{\pgfpointorigin}{\pgfpoint{1cm}{0cm}}
 
 \def\pgftransformarrow#1#2{%
+  \pgftransformshift{#2}%
   \pgf@process{#2}%
-  \pgftransformshift{}%
   \pgf@xa=\pgf@x%
   \pgf@ya=\pgf@y%
   \pgf@process{#1}%
@@ -608,62 +595,6 @@
   {\pgf@sys@tonumber{\pgf@ya}}{\pgf@sys@tonumber{\pgf@x}}{\pgfqpoint{0pt}{0pt}}%
 }
 
-
-
-
-% Computes transformations adjustments for the current transformation
-% matrix 
-%
-% Description:
-% 
-% This command is used when you install a transformation matrix that
-% scales everything by a certain factor, but you still wish to draw
-% something with "an absolute size". Suppose for instance that you
-% install a transformation matrix that scales everything by a factor
-% of 4 and you now wish to draw a horizontal line of length 1cm. Then,
-% if you do not reset the transformation matrix, you can draw a line
-% of logical length 2.5mm, which will then get scaled to a line of
-% 1cm.
-% 
-% Things get more difficult in case you scale things only, say,
-% vertically. In this case, the adjustement necessary for horizontal
-% lines is different from the one needed for vertical lines.
-% 
-% This function computes the necessary scaling factors and puts them
-% in the macros \pgfhorizontaltransformationadjustment and
-% \pgfverticaltransformationadjustment.
-% 
-% Note that the "right" way to draw a line of absolute length 1cm in a
-% transformed coordinate system is to first compute the start point
-% and to then reset the transformation matrix. The transofmration
-% adjustments computed here are important only in situations where you
-% cannot do this, for instance when an "outer xsep" must be set.
-
-\def\pgftransformationadjustments{%
-  \ifpgf@pt@identity%
-    \let\pgfhorizontaltransformationadjustment\pgf@one@text%
-    \let\pgfverticaltransformationadjustment\pgf@one@text%
-  \else%
-    {%
-      \pgf@pt@x0pt%
-      \pgf@pt@y0pt%
-      \pgfpointtransformed{\pgfqpoint{1pt}{0pt}}%
-      \pgfmathveclen@{\pgf@sys@tonumber\pgf@x}{\pgf@sys@tonumber\pgf@y}%
-      \pgfmathreciprocal@{\pgfmathresult}%
-      \global\let\pgf@temp@hori\pgfmathresult
-      \pgfpointtransformed{\pgfqpoint{0pt}{1pt}}%
-      \pgfmathveclen@{\pgf@sys@tonumber\pgf@x}{\pgf@sys@tonumber\pgf@y}%
-      \pgfmathreciprocal@{\pgfmathresult}%
-      \global\let\pgf@temp@vert\pgfmathresult
-      \xdef\pgf@marshal@b{\def\noexpand\pgfverticaltransformationadjustment{\pgfmathresult}}
-    }%
-    \let\pgfhorizontaltransformationadjustment\pgf@temp@hori%
-    \let\pgfverticaltransformationadjustment\pgf@temp@vert%
-  \fi%
-}   
-
-\let\pgfhorizontaltransformationadjustment\pgf@one@text
-\let\pgfverticaltransformationadjustment\pgf@one@text
 
 
 % Low-level transformations
@@ -726,14 +657,6 @@
 \long\def\pgflowlevelobj#1#2{\pgfscope{\pgflowlevel{#1}#2}\endpgfscope}
 
 
-
-% Forward declarations for nonlinear stuff (have no effect till module
-% nonlineartransformations is loaded)
-
-\let\pgfapproximatenonlineartranslation\relax
-\let\pgfapproximatenonlineartransformation\relax
-\def\pgftransformnonlinear#1{\pgferror{You need to say
-    \string\usepgfmodule{nonlineartransformations} to use nonlinear transformations}}
 
 
 \endinput

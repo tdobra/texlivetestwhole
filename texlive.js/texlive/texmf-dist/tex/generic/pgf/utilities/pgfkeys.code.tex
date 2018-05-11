@@ -25,14 +25,8 @@
 
 
 % This is useful:
-\newif\ifpgfkeys@csname@test%
 
-\def\pgfkeys@ifcsname#1\endcsname#2\else#3\fi{%
-  \pgfkeys@csname@testfalse%
-  \expandafter\ifx\csname#1\endcsname\relax\else\expandafter\ifx\csname#1\endcsname\@undefined\else\pgfkeys@csname@testtrue\fi\fi%
-  \ifpgfkeys@csname@test#2\else#3\fi%
-}%
-
+\def\pgfkeys@ifcsname#1\endcsname#2\else#3\fi{\expandafter\ifx\csname#1\endcsname\relax#3\else#2\fi}%
 \ifx\eTeXrevision\undefined%
 \else%
   \expandafter\let\expandafter\pgfkeys@ifcsname\csname ifcsname\endcsname%
@@ -43,7 +37,7 @@
 % This also:
 
 \ifx\PackageError\undefined
-  \def\pgfkeys@error#1{\errmessage{Package pgfkeys Error: #1.}}%
+  \def\pgfkeys@error#1{\immediate\write-1{Package pgfkeys: Error! #1.}}%
 \else
   \def\pgfkeys@error#1{\PackageError{pgfkeys}{#1}{}}%
 \fi
@@ -186,10 +180,10 @@
 % for handled keys).
 \long\def\pgfkeysifassignable#1#2#3{%
   \pgfkeysifdefined{#1}%
-    {#2}
-  {\pgfkeysifdefined{#1/.@cmd}%
-    {#2}%
-    {#3}}%
+  	{#2}
+	{\pgfkeysifdefined{#1/.@cmd}%
+	  {#2}%
+	  {#3}}%
 }%
 
 
@@ -292,37 +286,14 @@
     \expandafter\pgfkeys@normal%
   \fi%
 }
-\newif\ifpgfkeys@syntax@handlers
-\def\pgfkeys@normal{%
-  \ifpgfkeys@syntax@handlers%
-    \expandafter\pgfkeys@syntax@handlers%
-  \else%
-    \expandafter\pgfkeys@@normal%
-  \fi%
-}
-\def\pgfkeys@syntax@handlers{\pgf@keys@utilifnextchar\relax\pgfkeys@syntax@@handlers\pgfkeys@syntax@@handlers}%get rid of spaces
-\def\pgfkeys@syntax@@handlers{\futurelet\pgfkeys@first@char\pgfkeys@syntax@handlers@test}
-\def\pgfkeys@syntax@handlers@test{%
-  \pgfkeysgetvalue{/handlers/first char syntax/\meaning\pgfkeys@first@char}\pgfkeys@the@handler%
-  \ifx\pgfkeys@the@handler\relax%
-    \expandafter\pgfkeys@@normal%
-  \else%
-    \expandafter\pgfkeys@use@handler%
-  \fi%
-}
-\long\def\pgfkeys@use@handler#1,{%
-  \pgfkeys@the@handler{#1}%
-  \pgfkeys@parse%
-}
-
-\long\def\pgfkeys@@normal#1,{%
+\long\def\pgfkeys@normal#1,{%
   \pgfkeys@unpack#1=\pgfkeysnovalue=\pgfkeys@stop%
   \pgfkeys@parse%
 }
 \def\pgfkeys@cleanup\pgfkeys@mainstop{}
 
 \def\pgfkeys@mainstop{\pgfkeys@mainstop} % equals only itself
-\def\pgfkeys@novalue{} 
+\def\pgfkeys@novalue{} % equals only itself
 \def\pgfkeysnovalue{\pgfkeys@novalue} % equals only itself
 \def\pgfkeysnovalue@text{\pgfkeysnovalue}
 \def\pgfkeysvaluerequired{\pgfkeysvaluerequired} % equals only itself
@@ -341,8 +312,7 @@
       {}% no default, so leave it
     \fi%
     \ifx\pgfkeyscurrentvalue\pgfkeysvaluerequired%
-      \def\pgf@marshal{\pgfkeysvalueof{/errors/value required/.@cmd}}%
-      \expandafter\pgf@marshal\expandafter{\pgfkeyscurrentkey}{}\pgfeov%
+      \pgfkeysvalueof{/errors/value required/.@cmd}\pgfkeyscurrentkey\pgfkeyscurrentvalue\pgfeov%
     \else%
       \pgfkeys@case@one%
     \fi%
@@ -386,30 +356,30 @@
   \pgfkeys@split@path%
   \pgfkeysifdefined{/handlers/\pgfkeyscurrentname/.@cmd}{%
     \pgfkeys@ifexecutehandler{%
-    \pgfkeysgetvalue{/handlers/\pgfkeyscurrentname/.@cmd}{\pgfkeys@code}%
+	  \pgfkeysgetvalue{/handlers/\pgfkeyscurrentname/.@cmd}{\pgfkeys@code}%
       \expandafter\pgfkeys@code\pgfkeyscurrentvalue\pgfeov
-  }{%
+	}{%
       % this here is necessary:  /my search path/key/.code
       % won't be called, so \pgfkeyscurrentpath == '/my search path/key'
       % -> it should be one directory higher! We want to invoke the
-    %  .unknown handler in
-    % '/my search path'
-    %
-    % Idea:
-    % set 
-    % - path := '/my search path'
-    % - name := 'key/.code'
-    % - key = '/my search path/key/.code'
-    \let\pgfkeys@temp=\pgfkeyscurrentkey
-    \let\pgfkeys@tempb=\pgfkeyscurrentname
+	  %  .unknown handler in
+	  % '/my search path'
+	  %
+	  % Idea:
+	  % set 
+	  % - path := '/my search path'
+	  % - name := 'key/.code'
+	  % - key = '/my search path/key/.code'
+	  \let\pgfkeys@temp=\pgfkeyscurrentkey
+	  \let\pgfkeys@tempb=\pgfkeyscurrentname
       \edef\pgfkeyscurrentkey{\pgfkeyscurrentpath}%
       \pgfkeys@split@path%
-    \let\pgfkeyscurrentkey=\pgfkeys@temp
-    \edef\pgfkeyscurrentname{\pgfkeyscurrentname/\pgfkeys@tempb}%
-      \pgfkeys@unknown
-  }%
+	  \let\pgfkeyscurrentkey=\pgfkeys@temp
+	  \edef\pgfkeyscurrentname{\pgfkeyscurrentname/\pgfkeys@tempb}%
+  	  \pgfkeys@unknown
+	}%
   }{%
-    \pgfkeys@unknown
+  	\pgfkeys@unknown
   }%
 }
 
@@ -424,31 +394,37 @@
   \else
      % implement the 'only existing' feature here:
      \pgfkeysifdefined{\pgfkeyscurrentpath}{#1}{%
-    \pgfkeysifdefined{\pgfkeyscurrentpath/.@cmd}{#1}{#2}%
+		\pgfkeysifdefined{\pgfkeyscurrentpath/.@cmd}{#1}{#2}%
      }{}%
   \fi%
 }%
 \def\pgfkeys@ifexecutehandler@handlefullorexisting#1#2{%
   \ifpgfkeysaddeddefaultpath
     \pgfkeys@ifcsname pgfk@excpt@\pgfkeyscurrentname\endcsname%
+%\message{ifexecutehandler(\pgfkeyscurrentkeyRAW, path \pgfkeysdefaultpath): '\pgfkeyscurrentname' is an exception; processing it (on \pgfkeyscurrentpath).}%
        #1% ok, this particular key handler is known and be processed in any case (for example .try)
     \else
        % implement the 'only existing' feature here:
        \pgfkeysifdefined{\pgfkeyscurrentpath}{%
-         #1%
-       }{%
-         \pgfkeysifdefined{\pgfkeyscurrentpath/.@cmd}{%
-           #1%
-         }{%
-           #2%
-         }%
-       }%
+%\message{ifexecutehandler(\pgfkeyscurrentkeyRAW, path \pgfkeysdefaultpath): '\pgfkeyscurrentpath' does exist. Executing '\pgfkeyscurrentname'.}%
+          #1%
+		}{%
+			\pgfkeysifdefined{\pgfkeyscurrentpath/.@cmd}{%
+%\message{ifexecutehandler(\pgfkeyscurrentkeyRAW, path \pgfkeysdefaultpath): '\pgfkeyscurrentpath/.@cmd' does exist. Executing '\pgfkeyscurrentname'.}%
+               #1%
+            }{%
+%\message{ifexecutehandler(\pgfkeyscurrentkeyRAW, path \pgfkeysdefaultpath): '\pgfkeyscurrentpath' does NOT exist. Skipping '\pgfkeyscurrentname'.}%
+               #2%
+            }%
+        }%
     \fi%
   \else
+%\message{ifexecutehandler(\pgfkeyscurrentkeyRAW, path \pgfkeysdefaultpath): Fully qualified key provided. Executing '\pgfkeyscurrentname'.}%
     #1% ok, always true if the USER explicitly provided the full key path.
   \fi
 }%
-\def\pgfkeysaddhandleonlyexistingexception#1{\expandafter\def\csname pgfk@excpt@#1\endcsname{1}}%
+\def\pgfkeysaddhandlyonlyexistingexception#1{\expandafter\def\csname pgfk@excpt@#1\endcsname{1}}%
+
 
 \def\pgfkeys@unknown{%
   \pgfkeysifdefined{\pgfkeyscurrentpath/.unknown/.@cmd}%
@@ -603,12 +579,10 @@
 \long\def\pgfkeysdef#1#2{%
   \long\def\pgfkeys@temp##1\pgfeov{#2}%
   \pgfkeyslet{#1/.@cmd}{\pgfkeys@temp}%
-  \pgfkeyssetvalue{#1/.@body}{#2}%
 }
 \long\def\pgfkeysedef#1#2{%
   \long\edef\pgfkeys@temp##1\pgfeov{#2}%
   \pgfkeyslet{#1/.@cmd}{\pgfkeys@temp}%
-  \pgfkeyssetvalue{#1/.@body}{#2}%
 }
 
 
@@ -654,27 +628,27 @@
 % % defnargs:
 % \pgfkeysdefnargs{/a}{2}{1=`#1', 2=`#2'}
 % \pgfkeys{
-%   /a=
-%     {1}
-%     {2}
+% 	/a=
+% 		{1}
+% 		{2}
 % }
 % ->defnargs: 1=`1', 2=`2'
 % 
 % defargs:
 % \pgfkeysdefargs{/b}{#1#2}{1=`#1', 2=`#2'}
 % \pgfkeys{
-%   /b=
-%     {1}
-%     {2}
+% 	/b=
+% 		{1}
+% 		{2}
 % }
 % ->defargs: 1=`1', 2=` 2'  (note the space!)
 %
 % defargs:
 % \pgfkeysdefargs{/b}{#1#2}{1=`#1', 2=`#2'}
 % \pgfkeys{
-%   /b=
-%     {1}% 
-%     {2}
+% 	/b=
+% 		{1}% 
+% 		{2}
 % }
 % ->defargs: 1=`1', 2=`2'
 %-------------------------------------------------- 
@@ -682,30 +656,32 @@
 \long\def\pgfkeysedefnargs#1#2#3{\pgfkeysdefnargs@{#1}{#2}{#3}{\edef}}%
 \long\def\pgfkeysdefnargs@#1#2#3#4{%
   \ifcase#2\relax
-    \pgfkeyssetvalue{#1/.@args}{}%
+	  \pgfkeyssetvalue{#1/.@args}{}%
   \or
-    \pgfkeyssetvalue{#1/.@args}{##1}%
+	  \pgfkeyssetvalue{#1/.@args}{##1}%
   \or
-    \pgfkeyssetvalue{#1/.@args}{##1##2}%
+	  \pgfkeyssetvalue{#1/.@args}{##1##2}%
   \or
-    \pgfkeyssetvalue{#1/.@args}{##1##2##3}%
+	  \pgfkeyssetvalue{#1/.@args}{##1##2##3}%
   \or
-    \pgfkeyssetvalue{#1/.@args}{##1##2##3##4}%
+	  \pgfkeyssetvalue{#1/.@args}{##1##2##3##4}%
   \or
-    \pgfkeyssetvalue{#1/.@args}{##1##2##3##4##5}%
+	  \pgfkeyssetvalue{#1/.@args}{##1##2##3##4##5}%
   \or
-    \pgfkeyssetvalue{#1/.@args}{##1##2##3##4##5##6}%
+	  \pgfkeyssetvalue{#1/.@args}{##1##2##3##4##5##6}%
   \or
-    \pgfkeyssetvalue{#1/.@args}{##1##2##3##4##5##6##7}%
+	  \pgfkeyssetvalue{#1/.@args}{##1##2##3##4##5##6}%
   \or
-    \pgfkeyssetvalue{#1/.@args}{##1##2##3##4##5##6##7##8}%
+	  \pgfkeyssetvalue{#1/.@args}{##1##2##3##4##5##6##7}%
   \or
-    \pgfkeyssetvalue{#1/.@args}{##1##2##3##4##5##6##7##8##9}%
+	  \pgfkeyssetvalue{#1/.@args}{##1##2##3##4##5##6##7##8}%
+  \or
+	  \pgfkeyssetvalue{#1/.@args}{##1##2##3##4##5##6##7##8##9}%
   \else
-    \pgfkeys@error{\string\pgfkeysdefnargs: expected  <= 9 arguments, got #2}%
+	  \pgfkeys@error{\string\pgfkeysdefnargs: expected  <= 9 arguments, got #2}%
   \fi
   \pgfkeysgetvalue{#1/.@args}\pgfkeys@tempargs
-  \def\pgfkeys@temp{\expandafter\long\expandafter#4\csname pgfk@#1/.@@body\endcsname}%
+  \def\pgfkeys@temp{\expandafter#4\csname pgfk@#1/.@@body\endcsname}%
   \expandafter\pgfkeys@temp\pgfkeys@tempargs{#3}%
   % eliminate the \pgfeov at the end such that TeX gobbles spaces
   % by using
@@ -736,37 +712,34 @@
   % Find out, whether with args or not.
   \pgfkeysifdefined{\pgfkeyscurrentpath/.@args}%
   {% Yes, so add to body and reuse args
-  \pgfkeysaddvalue{\pgfkeyscurrentpath/.@body}{#1}{#2}%
-  % Redefine code
-  {%
-    \pgfkeysgetvalue{\pgfkeyscurrentpath/.@args}{\pgfkeys@tempargs}%
-    \pgfkeysgetvalue{\pgfkeyscurrentpath/.@body}{\pgfkeys@tempbody}%
-    \def\pgfkeys@marshal{\expandafter\gdef\expandafter\pgfkeys@global@temp\pgfkeys@tempargs}%
-    \expandafter\pgfkeys@marshal\expandafter{\pgfkeys@tempbody}%
-  }%
+	\pgfkeysaddvalue{\pgfkeyscurrentpath/.@body}{#1}{#2}%
+	% Redefine code
+	{%
+	  \pgfkeysgetvalue{\pgfkeyscurrentpath/.@args}{\pgfkeys@tempargs}%
+	  \pgfkeysgetvalue{\pgfkeyscurrentpath/.@body}{\pgfkeys@tempbody}%
+	  \def\pgfkeys@marshal{\expandafter\gdef\expandafter\pgfkeys@global@temp\pgfkeys@tempargs}%
+	  \expandafter\pgfkeys@marshal\expandafter{\pgfkeys@tempbody}%
+	}%
     \pgfkeysifdefined{\pgfkeyscurrentpath/.@@body}{%
-    % support for \pgfkeysndefargs:
-    \pgfkeyslet{\pgfkeyscurrentpath/.@@body}{\pgfkeys@global@temp}%
-  }{%
-    % support for \pgfkeysdefargs:
+	  % support for \pgfkeysndefargs:
+	  \pgfkeyslet{\pgfkeyscurrentpath/.@@body}{\pgfkeys@global@temp}%
+	}{%
+	  % support for \pgfkeysdefargs:
       \pgfkeyslet{\pgfkeyscurrentpath/.@cmd}{\pgfkeys@global@temp}%
-  }%
+	}%
   }%
   {%
     % No, so single argument (simple \pgfkeysdef). Redefine accordingly.
-    \edef\pgf@expanded@path{\pgfkeyscurrentpath}%
     {%
       \toks0{#1}%
-      \pgfkeysifdefined{\pgf@expanded@path/.@cmd}%
-      {\expandafter\expandafter\expandafter\pgfkeys@temptoks\expandafter\expandafter\expandafter{\csname pgfk@\pgf@expanded@path/.@body\endcsname}}%
-      {\expandafter\pgfkeys@temptoks\expandafter{\expandafter\pgfkeyssetvalue\expandafter{\pgf@expanded@path}{##1}}}%
+      \pgfkeysifdefined{\pgfkeyscurrentpath/.@cmd}%
+      {\pgfkeys@temptoks\expandafter\expandafter\expandafter{\csname pgfk@\pgfkeyscurrentpath/.@cmd\endcsname##1\pgfeov}}%
+      {\pgfkeys@temptoks{}}%
       \toks1{#2}%
       \xdef\pgfkeys@global@temp{\the\toks0 \the\pgfkeys@temptoks \the\toks1 }%
     }%
-    \def\pgf@temp{\pgfkeyssetvalue{\pgf@expanded@path/.@body}}%
-    \expandafter\pgf@temp\expandafter{\pgfkeys@global@temp}%
-    \expandafter\long\expandafter\def\expandafter\pgfkeys@temp\expandafter##\expandafter1\expandafter\pgfeov\expandafter{\pgfkeys@global@temp}%
-    \pgfkeyslet{\pgf@expanded@path/.@cmd}\pgfkeys@temp%
+    \expandafter\def\expandafter\pgfkeys@temp\expandafter##\expandafter1\expandafter\pgfeov\expandafter{\pgfkeys@global@temp}%
+    \pgfkeyslet{\pgfkeyscurrentpath/.@cmd}\pgfkeys@temp%
   }%
 }
 \pgfkeys{/handlers/.prefix code/.code=\pgfkeys{\pgfkeyscurrentpath/.add code={#1}{}}}%
@@ -807,8 +780,7 @@
 {%
   \ifx\pgfkeyscurrentvalue\pgfkeysnovalue@text%
   \else%
-    \def\pgf@marshal{\pgfkeysvalueof{/errors/value forbidden/.@cmd}}%
-    \expandafter\expandafter\expandafter\pgf@marshal\expandafter\expandafter\expandafter{\expandafter\pgfkeyscurrentkey\expandafter}\expandafter{\pgfkeyscurrentvalue}\pgfeov%
+    \pgfkeysvalueof{/errors/value forbidden/.@cmd}\pgfkeyscurrentkey\pgfkeyscurrentvalue\pgfeov%
   \fi%
 }{}}}
 
@@ -827,32 +799,23 @@
   \pgfkeys@ifcsname#1#2\endcsname%
     \csname#1#2\endcsname%
   \else%
-    \def\pgf@marshal{\pgfkeysvalueof{/errors/boolean expected/.@cmd}}%
-    \expandafter\pgf@marshal\expandafter{\pgfkeyscurrentkey}{#2}\pgfeov%
+    \pgfkeysvalueof{/errors/boolean expected/.@cmd}\pgfkeyscurrentkey{#2}\pgfeov%
   \fi
 }
 
 \pgfkeys{/handlers/.is choice/.code=%
   \pgfkeys{%
     \pgfkeyscurrentpath/.cd,%
-    .code=\def\pgfkeys@was@choice{##1}\expandafter\pgfkeysalso\expandafter{\pgfkeyscurrentkey/##1},
-    .unknown/.code={%
-      \def\pgf@marshal{\pgfkeysvalueof{/errors/unknown choice value/.@cmd}}%
-      {\expandafter\expandafter\expandafter\pgf@marshal\expandafter\expandafter\expandafter{\expandafter\the\expandafter\pgfkeys@pathtoks\expandafter}\expandafter{\pgfkeys@was@choice}\pgfeov}%
-    }%
-  }%
-}
+    .code=\expandafter\pgfkeysalso\expandafter{\pgfkeyscurrentkey/##1},
+    .unknown/.style={/errors/unknown choice value=\pgfkeyscurrentkey\pgfkeyscurrentvalue}}}
 
 
 % Repeatedly setting a key
 
 \pgfkeys{/handlers/.list/.code=%
   {%
-    \ifx\foreach\@undefined%
-      \pgfkeys@error{You need to load the pgffor package to use the .list key syntax.}%
-    \fi%
     % Use foreach to unfold the list
-    \def\pgf@keys@temp{}%
+    \let\pgf@keys@temp=\pgfutil@empty%
     \foreach \pgf@keys@key in{#1}%
     {\expandafter\expandafter\expandafter\gdef%
       \expandafter\expandafter\expandafter\pgf@keys@temp%
@@ -862,15 +825,9 @@
     \expandafter\expandafter\expandafter{\expandafter\pgf@keys@list@path\expandafter}\pgf@keys@temp\pgf@stop%
   }% 
 }
-\def\pgf@keys@do@list#1{\pgf@keys@utilifnextchar\bgroup{\pgf@keys@do@list@item{#1}}\pgf@keys@gobble}
+\def\pgf@keys@do@list#1{\pgfutil@ifnextchar\bgroup{\pgf@keys@do@list@item{#1}}\pgfutil@gobble}
 \def\pgf@keys@do@list@item#1#2{\pgfkeysalso{#1={#2}}\pgf@keys@do@list{#1}}
 
-
-% Forwarding
-
-\pgfkeys{/handlers/.forward to/.code=%
-  \pgfkeys{\pgfkeyscurrentpath/.add code={}{\pgfkeys{#1={##1}}}}
-}
 
 
 % Inspection handlers
@@ -878,9 +835,6 @@
 \pgfkeys{/handlers/.show value/.code=\pgfkeysgetvalue{\pgfkeyscurrentpath}{\pgfkeysshower}\show\pgfkeysshower} % inspect the value 
 \pgfkeys{/handlers/.show code/.code=\pgfkeysgetvalue{\pgfkeyscurrentpath/.@cmd}{\pgfkeysshower}\show\pgfkeysshower} % inspect the body of the command
 
-
-% First char syntax handlers
-\pgfkeys{/handlers/first char syntax/.is if=pgfkeys@syntax@handlers}
 
 % Path handling
 
@@ -890,23 +844,22 @@
   \global\def\pgfkeys@global@temp##1\pgfeov{}%
   \pgfkeys@searchalso@parse#1,\pgfkeys@mainstop
   {%
-    \toks0=\expandafter{\pgfkeys@global@temp##1\pgfeov}%
-  \toks1={\pgfkeysalso{/handlers/.unknown/.@cmd/.expand once=\pgfkeys@searchalso@temp@value}}%
-  \xdef\pgfkeys@global@temp{%
-    \noexpand\def\noexpand\pgfkeys@searchalso@temp@value{####1}%
-    \noexpand\ifpgfkeysaddeddefaultpath
-      \noexpand\pgfkeyssuccessfalse
-      \noexpand\let\noexpand\pgfkeys@searchalso@name=\noexpand\pgfkeyscurrentkeyRAW
-      \the\toks0 % one or more /.try things; one for each path. The last element won't have a /.try
-      %\noexpand\ifpgfkeyssuccess
-      %\noexpand\else
-      %  \the\toks1 % invoke /handlers/.unknown handler
-      %\noexpand\fi
-    \noexpand\else
-      \the\toks1 % invoke /handlers/.unknown handler
-    \noexpand\fi
-  }%
-  \expandafter\gdef\expandafter\pgfkeys@global@temp\expandafter##\expandafter1\expandafter\pgfeov\expandafter{\pgfkeys@global@temp}%
+  	\toks0=\expandafter{\pgfkeys@global@temp##1\pgfeov}%
+	\toks1={\def\pgfutilnext{\pgfkeysvalueof{/handlers/.unknown/.@cmd}##1\pgfeov}\pgfutilnext}%
+	\xdef\pgfkeys@global@temp{%
+		\noexpand\ifpgfkeysaddeddefaultpath
+			\noexpand\pgfkeyssuccessfalse
+			\noexpand\let\noexpand\pgfkeys@searchalso@name=\noexpand\pgfkeyscurrentkeyRAW
+			\the\toks0 % one or more /.try things; one for each path. The last element won't have a /.try
+			%\noexpand\ifpgfkeyssuccess
+			%\noexpand\else
+			%	\the\toks1 % invoke /handlers/.unknown handler
+			%\noexpand\fi
+		\noexpand\else
+			\the\toks1 % invoke /handlers/.unknown handler
+		\noexpand\fi
+	}%
+	\expandafter\gdef\expandafter\pgfkeys@global@temp\expandafter##\expandafter1\expandafter\pgfeov\expandafter{\pgfkeys@global@temp}%
   }%
 }%
 
@@ -923,36 +876,36 @@
   \pgfkeys@spdef\pgfkeys@temp{#1}%
   {%
     \toks0=\expandafter{\pgfkeys@global@temp##1\pgfeov}%
-  \toks1=\expandafter{\pgfkeys@temp}%
-  \xdef\pgfkeys@global@temp{%
-    \the\toks0 % the space is important!
-    \noexpand\ifpgfkeyssuccess\noexpand\else
-      \noexpand\pgfqkeys{\the\toks1 }{\noexpand\pgfkeys@searchalso@name
-               \ifx\pgfkeys@searchalso@nexttok\pgfkeys@mainstop\else/.try\fi /.expand once=\noexpand\pgfkeys@searchalso@temp@value}%
-    \noexpand\fi}%
-  \expandafter\gdef\expandafter\pgfkeys@global@temp\expandafter##\expandafter1\expandafter\pgfeov\expandafter{\pgfkeys@global@temp}%
+	\toks1=\expandafter{\pgfkeys@temp}%
+	\toks2={##1}%
+	\xdef\pgfkeys@global@temp{%
+		\the\toks0 % the space is important!
+		\noexpand\ifpgfkeyssuccess\noexpand\else
+			\noexpand\pgfqkeys{\the\toks1 }{\noexpand\pgfkeys@searchalso@name
+               \ifx\pgfkeys@searchalso@nexttok\pgfkeys@mainstop\else/.try\fi={\the\toks2 }}%
+		\noexpand\fi}%
+	\expandafter\gdef\expandafter\pgfkeys@global@temp\expandafter##\expandafter1\expandafter\pgfeov\expandafter{\pgfkeys@global@temp}%
   }%
   \pgfkeys@searchalso@parse#2%
 }
 \pgfkeys{%
-  /handlers/.is family/.code=\pgfkeys{\pgfkeyscurrentpath/.ecode=\edef\noexpand\pgfkeysdefaultpath{\pgfkeyscurrentpath/}},%
-  /handlers/.cd/.code=\edef\pgfkeysdefaultpath{\pgfkeyscurrentpath/},%
-  /handlers/.search also/.code={%
-    \pgfkeys@searchalso@prepare@unknown@handler{#1}%
+	/handlers/.is family/.code=\pgfkeys{\pgfkeyscurrentpath/.ecode=\edef\noexpand\pgfkeysdefaultpath{\pgfkeyscurrentpath/}},%
+	/handlers/.cd/.code=\edef\pgfkeysdefaultpath{\pgfkeyscurrentpath/},%
+	/handlers/.search also/.code={%
+		\pgfkeys@searchalso@prepare@unknown@handler{#1}%
 %\message{I prepared the '\pgfkeyscurrentpath/.unknown' handler \meaning\pgfkeys@global@temp\space for '#1'.}%
-    \pgfkeyslet{\pgfkeyscurrentpath/.unknown/.@cmd}{\pgfkeys@global@temp}%
-  }
+		\pgfkeyslet{\pgfkeyscurrentpath/.unknown/.@cmd}{\pgfkeys@global@temp}%
+	}
 }%
 
 
 % Value expansion
 
 \pgfkeys{/handlers/.expand once/.code=\expandafter\pgfkeys@exp@call\expandafter{#1}}
-\pgfkeys{/handlers/.expand two once/.code 2 args=\expandafter\expandafter\expandafter\pgfkeys@exp@call\expandafter\expandafter\expandafter{\expandafter#1\expandafter}\expandafter{#2}}
 \pgfkeys{/handlers/.expand twice/.code=\expandafter\expandafter\expandafter\pgfkeys@exp@call\expandafter\expandafter\expandafter{#1}}
 \pgfkeys{/handlers/.expanded/.code=\edef\pgfkeys@temp{#1}\expandafter\pgfkeys@exp@call\expandafter{\pgfkeys@temp}}
 
-\long\def\pgfkeys@exp@call#1{\pgfkeysalso{\pgfkeyscurrentpath={#1}}}
+\def\pgfkeys@exp@call#1{\pgfkeysalso{\pgfkeyscurrentpath={#1}}}
 
 % Try to set a key and do nothing if not define
 
@@ -985,20 +938,20 @@
     {%
       \pgfkeys@split@path%
       \pgfkeysifdefined{/handlers/\pgfkeyscurrentname/.@cmd}{%
-      % in the standard configuration, this check here is redundand
-      % because pgfkeys@ifexecutehandler === true.
-    % It is only interesting for 'handle only existing'.
+	    % in the standard configuration, this check here is redundand
+	    % because pgfkeys@ifexecutehandler === true.
+		% It is only interesting for 'handle only existing'.
         \pgfkeys@ifexecutehandler{%
-        \pgfkeysgetvalue{/handlers/\pgfkeyscurrentname/.@cmd}{\pgfkeys@code}%
+	      \pgfkeysgetvalue{/handlers/\pgfkeyscurrentname/.@cmd}{\pgfkeys@code}%
           \expandafter\pgfkeys@code\pgfkeyscurrentvalue\pgfeov
           \pgfkeyssuccesstrue%
+    	}{%
+	      \pgfkeyssuccessfalse
+    	}%
       }{%
-        \pgfkeyssuccessfalse
+	    \pgfkeyssuccessfalse
       }%
-      }{%
-      \pgfkeyssuccessfalse
-      }%
-  }%
+	}%
   }%
 }
 
@@ -1009,111 +962,49 @@
 
 % Errors
 
-\pgfkeys{
-  /errors/boolean expected/.code 2 args=%
-  {
-    \toks1={#1}
-    \toks2={#2}
-    \pgfkeys@error{%
-      Boolean parameter of key '\the\toks1' must be 'true' or 'false', not
-      '\the\toks2'. I am going to ignore it%
-    }
-  },
-  /errors/value required/.code 2 args=%
-  {
-    \toks1={#1}
-    \pgfkeys@error{%
-      The key '\the\toks1' requires a value. I am going to ignore this
-      key%
-    }
-  },
-  /errors/value forbidden/.code 2 args=%
-  {
-    \toks1={#1}
-    \toks2={#2}
-    \pgfkeys@error{%
-      You may not specify a value for the key '\the\toks1'. I am going to ignore
-      the value '\the\toks2' that you provided%
-    }
-  },
-  /errors/unknown choice value/.code 2 args=%
-  {
-    \toks1={#1}
-    \toks2={#2}
-    \pgfkeys@error{%
-      Choice '\the\toks2' unknown in choice key '\the\toks1'. I am
-      going to ignore this key%
-    }
-  },
-  /errors/unknown key/.code 2 args=%
-  {
-    \toks1={#1}
-    \toks2={#2}
-    \def\pgf@temp{#2}%
-    \pgfkeys@error{%
-      I do not know the key '\the\toks1'\ifx\pgf@temp\pgfkeysnovalue@text\space\else, to which you passed
-      '\the\toks2', \fi and I am going to ignore it. Perhaps you 
-      misspelled it%
-    }
-  }
-}
+\pgfkeys{/errors/boolean expected/.code 2 args=\pgfkeys@error{%
+    Boolean parameter of key '#1' must be 'true' or 'false', not
+    '#2'. I am going to ignore it}}  
+\pgfkeys{/errors/value required/.code 2 args=\pgfkeys@error{%
+    The key '#1' requires a value. I am going to ignore this key}{}}  
+\pgfkeys{/errors/value forbidden/.code 2 args=\pgfkeys@error{%
+    You may not specify a value for the key '#1'. I am going to ignore
+    the value '#2' that you provided}}
+\pgfkeys{/errors/unknown choice value/.code 2 args=\pgfkeys@error{%
+    Choice '\pgfkeyscurrentname' unknown in key
+    '\pgfkeyscurrentpath'. I am going to ignore this key}}
+\pgfkeys{/errors/unknown key/.code 2 args=\pgfkeys@error{%
+    I do not know the key '#1' and I am going to ignore it. Perhaps
+    you misspelled it}}
 
 \pgfkeys{/handlers/.unknown/.code=%
   {%
-    \def\pgf@marshal{\pgfkeysvalueof{/errors/unknown key/.@cmd}}%
-    {\expandafter\expandafter\expandafter\pgf@marshal\expandafter\expandafter\expandafter{\expandafter\pgfkeyscurrentkey\expandafter}\expandafter{\pgfkeyscurrentvalue}\pgfeov}%
-  }%
+    \let\pgfkeys@orig@key=\pgfkeyscurrentkey%
+    \pgfkeysalso{/errors/unknown key=\pgfkeys@orig@key{}}%
+  }
 }
 
 \pgfkeys{
-  /handler config/.is choice,
-  /handler config/all/.code={%
-    \let\pgfkeys@case@three=\pgfkeys@case@three@handleall
-    \let\pgfkeys@ifexecutehandler=\pgfkeys@ifexecutehandler@handleall
-  },
-  /handler config/only existing/.code={%
-    \let\pgfkeys@case@three=\pgfkeys@case@three@handle@restricted
-    \let\pgfkeys@ifexecutehandler=\pgfkeys@ifexecutehandler@handleonlyexisting
-  },
-  /handler config/full or existing/.code={%
-    \let\pgfkeys@case@three=\pgfkeys@case@three@handle@restricted
-    \let\pgfkeys@ifexecutehandler=\pgfkeys@ifexecutehandler@handlefullorexisting
-  },
-  /handler config/only existing/add exception/.code={\pgfkeysaddhandleonlyexistingexception{#1}},
+	/handler config/.is choice,
+	/handler config/all/.code={%
+		\let\pgfkeys@case@three=\pgfkeys@case@three@handleall
+		\let\pgfkeys@ifexecutehandler=\pgfkeys@ifexecutehandler@handleall
+	},
+	/handler config/only existing/.code={%
+		\let\pgfkeys@case@three=\pgfkeys@case@three@handle@restricted
+		\let\pgfkeys@ifexecutehandler=\pgfkeys@ifexecutehandler@handleonlyexisting
+	},
+	/handler config/full or existing/.code={%
+		\let\pgfkeys@case@three=\pgfkeys@case@three@handle@restricted
+		\let\pgfkeys@ifexecutehandler=\pgfkeys@ifexecutehandler@handlefullorexisting
+	},
+	/handler config/only existing/add exception/.code={\pgfkeysaddhandlyonlyexistingexception{#1}},
 }%
-\pgfkeysaddhandleonlyexistingexception{.cd}%
-\pgfkeysaddhandleonlyexistingexception{.try}%
-\pgfkeysaddhandleonlyexistingexception{.retry}%
-\pgfkeysaddhandleonlyexistingexception{.lastretry}%
-\pgfkeysaddhandleonlyexistingexception{.unknown}%
-\pgfkeysaddhandleonlyexistingexception{.expand once}%
-\pgfkeysaddhandleonlyexistingexception{.expand two once}%
-\pgfkeysaddhandleonlyexistingexception{.expand twice}%
-\pgfkeysaddhandleonlyexistingexception{.expanded}%
-
-
-% Utilities for self-containment
-\def\pgf@keys@gobble#1{}
-\long\def\pgf@keys@utilifnextchar#1#2#3{%
-  \let\pgf@keys@utilreserved@d=#1%
-  \def\pgf@keys@utilreserved@a{#2}%
-  \def\pgf@keys@utilreserved@b{#3}%
-  \futurelet\pgf@keys@utillet@token\pgf@keys@utilifnch}
-\def\pgf@keys@utilifnch{%
-  \ifx\pgf@keys@utillet@token\pgf@keys@utilsptoken
-    \let\pgf@keys@utilreserved@c\pgf@keys@utilxifnch
-  \else
-    \ifx\pgf@keys@utillet@token\pgf@keys@utilreserved@d
-      \let\pgf@keys@utilreserved@c\pgf@keys@utilreserved@a
-    \else
-      \let\pgf@keys@utilreserved@c\pgf@keys@utilreserved@b
-    \fi
-  \fi
-  \pgf@keys@utilreserved@c}
-{%
-  \def\:{\global\let\pgf@keys@utilsptoken= } \:
-  \def\:{\pgf@keys@utilxifnch} \expandafter\gdef\: {\futurelet\pgf@keys@utillet@token\pgf@keys@utilifnch}
-}
+\pgfkeysaddhandlyonlyexistingexception{.cd}%
+\pgfkeysaddhandlyonlyexistingexception{.try}%
+\pgfkeysaddhandlyonlyexistingexception{.retry}%
+\pgfkeysaddhandlyonlyexistingexception{.lastretry}%
+\pgfkeysaddhandlyonlyexistingexception{.unknown}%
 
 
 \input pgfkeysfiltered.code.tex

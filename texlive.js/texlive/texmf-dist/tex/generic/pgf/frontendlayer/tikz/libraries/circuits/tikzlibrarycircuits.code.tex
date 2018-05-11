@@ -77,8 +77,8 @@
   }
 }
 \newcount\tikz@lib@circ@count
-\def\tikz@zero@text{0.0}
-\def\tikz@one@text{1.0}
+\def\tikz@zero@text{0}
+\def\tikz@one@text{1}
 
 \def\tikz@lib@circ@compute@direction#1{%
   \tikz@scan@one@point\tikz@lib@circ@save@start(\tikztostart)%
@@ -176,7 +176,6 @@
           [annotation arrow,->]
           [label distance=#2,##1]
           #3
-          \tikz@after@path%
         \egroup%
       }
     },
@@ -190,7 +189,6 @@
           [annotation arrow,->]
           [label distance=#2,##1]
           #3
-          \tikz@after@path%
         \egroup%
       }
     }
@@ -253,15 +251,13 @@
 
 \def\tikz@lib@circ@lab[#1]#2\pgf@stop#3#4{\tikzset{label={[every info/.try,every #4/.try,#1]$\mathrm{#2#3}$}}}
 \def\tikz@lib@circ@lab@sloped[#1]#2\pgf@stop#3#4{\tikzset{label={[every info/.try,every #4/.try,transform shape,#1]$\mathrm{#2#3}$}}}
-\def\tikz@lib@circ@labp[#1]#2\pgf@stop#3#4{\tikzset{label={[label position=below,every info/.try,every #4/.try,#1]$\mathrm{#2#3}$}}}
-\def\tikz@lib@circ@lab@slopedp[#1]#2\pgf@stop#3#4{\tikzset{label={[label
-position=below,every info/.try,every #4/.try,transform shape,#1]$\mathrm{#2#3}$}}}
+\def\tikz@lib@circ@labp[#1]#2\pgf@stop#3#4{\tikzset{label={[every info/.try,every #4/.try,#1]below:$\mathrm{#2#3}$}}}
+\def\tikz@lib@circ@lab@slopedp[#1]#2\pgf@stop#3#4{\tikzset{label={[every info/.try,every #4/.try,transform shape,#1]below:$\mathrm{#2#3}$}}}
 
 \def\tikz@lib@circ@lab@plain[#1]#2\pgf@stop{\tikzset{label={[every info/.try,#1]#2}}}
 \def\tikz@lib@circ@lab@sloped@plain[#1]#2\pgf@stop{\tikzset{label={[every info/.try,transform shape,#1]#2}}}
-\def\tikz@lib@circ@labp@plain[#1]#2\pgf@stop{\tikzset{label={[label position=below,every info/.try,#1]#2}}}
-\def\tikz@lib@circ@lab@slopedp@plain[#1]#2\pgf@stop{\tikzset{label={[label
-position=below,every info/.try,transform shape,#1]#2}}}
+\def\tikz@lib@circ@labp@plain[#1]#2\pgf@stop{\tikzset{label={[every info/.try,#1]below:#2}}}
+\def\tikz@lib@circ@lab@slopedp@plain[#1]#2\pgf@stop{\tikzset{label={[every info/.try,transform shape,#1]below:#2}}}
 
 
 

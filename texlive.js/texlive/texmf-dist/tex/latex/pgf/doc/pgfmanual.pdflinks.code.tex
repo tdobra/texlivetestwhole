@@ -82,9 +82,6 @@
 	/pdflinks/codeexample links/.is if=pgfmanualprettyenabled,
 	/pdflinks/codeexample links/.default=true,
 	%
-	% How to render a hyperlink
-	/pdflinks/render hyperlink/.code=#1,
-	%
 	% whenever an unqualified key is found, the following key prefix
 	% list is tried to find a match.
 	/pdflinks/search key prefixes in/.initial={/tikz/,/pgf/},
@@ -126,12 +123,6 @@
 	/pdflinks/internal link prefix/.initial=pgf,
 }
 
-\begingroup
-  \catcode`\_=12
-  \gdef\pgfmanualpdf@underscore{_}%
-  \catcode`\ =13\relax\gdef\pgfmanualpdf@install@active@space{\def {\space}}%
-\endgroup
-
 \gdef\pgfmanualpdf@installreplacements{%
 	\def\marg##1{{##1}}%
 	\def\oarg##1{[##1]}%
@@ -141,15 +132,10 @@
 	\def\\{\textbackslash}%
 	\def\space{:}%
 	\edef\ {\space}%
-	\edef\SPACE{\` \relax}%
-	\ifnum\the\catcode`\ =13 %
-		\pgfmanualpdf@install@active@space
-	\fi
 	\edef\#{}%
 	\def\printanat{@}%
 	\def\protect{}%
 	\def\textasciicircum{o}%
-        \def\_{\pgfmanualpdf@underscore}%
 	\expandafter\edef\pgfmanual@verb@activebar{\pgfmanual@verb@bar}%
 }%
 
@@ -230,11 +216,7 @@
 		\fi
 		\expandafter\gdef\csname pgfd@lbl@\pgfmanualpdflabel@@\endcsname{w}% 1. remember the label AND remember that we "w"rote it into the pdf.
 		\edef\pgfmanualpdflabel@@{\pgfkeysvalueof{/pdflinks/internal link prefix}.\pgfmanualpdflabel@@}%
-                \ifvmode%
-                  \expandafter\hypertarget\expandafter{\pgfmanualpdflabel@@}{#2}%
-                \else%
-                  {\setbox0=\hbox{\raise1em\hbox{\expandafter\hypertarget\expandafter{\pgfmanualpdflabel@@}{}}}\ht0=0pt\box0}#2%
-                \fi%
+		\expandafter\hypertarget\expandafter{\pgfmanualpdflabel@@}{#2}%
 	\else
 		#2%
 	\fi
@@ -280,7 +262,7 @@
 }%
 \def\pgfmanualpdfref@#1#2{%
 	\pgfkeysgetvalue{/pdflinks/internal link prefix}\pgfmanual@temp
-	\expandafter\hyperlink\expandafter{\pgfmanual@temp.#1}{\pgfkeysvalueof{/pdflinks/render hyperlink/.@cmd}{#2}\pgfeov}%
+	\expandafter\hyperlink\expandafter{\pgfmanual@temp.#1}{#2}%
 	\ifpgfmanualshowlabels
 		\pgfkeysvalueof{/pdflinks/show labels code/.@cmd}{#1}\pgfeov
 	\fi

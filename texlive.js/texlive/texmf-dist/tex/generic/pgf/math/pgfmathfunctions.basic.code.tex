@@ -121,70 +121,15 @@
 				\divide\c@pgfmath@counta by\c@pgfmath@countb%
 				\pgfmath@ya=\c@pgfmath@counta\pgfmath@y%
 				\advance\pgfmath@x by-\pgfmath@ya%
-				\def\pgfmath@next{%
-					\toks0=\expandafter{\pgfmathresult}%
-					\edef\pgfmathresult{\the\toks0 \the\c@pgfmath@counta}%
-				}%
-				\ifpgfmath@divide@period
-				\else
-					% we are behind the period. It may happen that the
-					% result is more than one digit - in that case,
-					% introduce special handling:
-					\ifnum\c@pgfmath@counta>9 %
-						\expandafter\pgfmathdivide@advance@last@digit\pgfmathresult CCCCC\@@
-						\advance\c@pgfmath@counta by-10 %
-						\ifnum\c@pgfmath@counta=0
-							\let\pgfmath@next=\relax
-						\fi
-					\fi
-				\fi
-				\pgfmath@next
+				\expandafter\expandafter\expandafter\def%
+					\expandafter\expandafter\expandafter\pgfmathresult
+						\expandafter\expandafter\expandafter{\expandafter\pgfmathresult\the\c@pgfmath@counta}%
 			\fi%
 			\let\pgfmath@next=\pgfmathdivide@@%
 		\fi%
 	\fi%
 	\pgfmath@next%
 }
-
-% advances the last digit found in the number. Any missing digits are
-% supposed to be filled with 'C'.
-\def\pgfmathdivide@advance@last@digit#1.#2#3#4#5#6#7\@@{%
-	\pgfmath@ya=\pgfmathresult pt %
-	\if#2C%
-		\pgfmath@xa=1pt %
-	\else
-		\if#3C%
-			\pgfmath@xa=0.1pt %
-		\else
-			\if#4C%
-				\pgfmath@xa=0.01pt %
-			\else
-				\if#5C%
-					\pgfmath@xa=0.001pt %
-				\else
-					\if#6C%
-						\pgfmath@xa=0.0001pt %
-					\else
-						\pgfmath@xa=0.00001pt %
-					\fi
-				\fi
-			\fi
-		\fi
-	\fi
-	\advance\pgfmath@ya by\pgfmath@xa
-	\edef\pgfmathresult{\pgfmath@tonumber@notrailingzero\pgfmath@ya}%
-}%
-
-{
-\catcode`\p=12
-\catcode`\t=12
-\gdef\Pgf@geT@NO@TRAILING@ZERO#1.#2pt{%
-	#1.%
-	\ifnum#2=0 \else #2\fi
-}
-}
-\def\pgfmath@tonumber@notrailingzero#1{\expandafter\Pgf@geT@NO@TRAILING@ZERO\the#1}
-
 
 \def\pgfmathdivide@dimenbyten#1{%
 	\edef\pgfmath@temp{\pgfmath@tonumber{#1}}%
@@ -306,22 +251,6 @@
 		\fi%
 	\pgfmath@returnone\pgfmath@x%
 	\endgroup%
-}
-
-% sign(x)
-\pgfmathdeclarefunction{sign}{1}{%
-  \begingroup
-    \ifdim#1pt>0sp %
-      \def\pgfmathresult{1}%
-    \else
-      \ifdim#1pt=0sp %
-        \def\pgfmathresult{0}%
-      \else
-        \def\pgfmathresult{-1}%
-      \fi
-    \fi
-    \pgfmath@smuggleone\pgfmathresult
-  \endgroup
 }
 
 % e constant.
@@ -519,42 +448,35 @@
 	\endgroup%
 }
 
-% This is needed since \pgfmathlog2 and \pgfmathlog10 are not legal macro names
-\expandafter\let\expandafter\pgfmathlogtwo\csname pgfmathlog2\endcsname
-\expandafter\let\expandafter\pgfmathlogtwo@\csname pgfmathlog2@\endcsname
-\expandafter\let\expandafter\pgfmathlogten\csname pgfmathlog10\endcsname
-\expandafter\let\expandafter\pgfmathlogten@\csname pgfmathlog10@\endcsname
-
 % exp function.
 %
 \pgfmathdeclarefunction{exp}{1}{%	
-  \begingroup
-    \pgfmath@xc=#1pt\relax
-    \pgfmath@yc=#1pt\relax
-    \ifdim\pgfmath@xc<-9pt
-      \pgfmath@x=1sp\relax
-    \else
-      \ifdim\pgfmath@xc<0pt
-        \pgfmath@xc=-\pgfmath@xc
-      \fi
-      \pgfmath@x=1pt\relax
-      \pgfmath@xa=1pt\relax
-      \pgfmath@xb=\pgfmath@x
+  \begingroup%
+    \pgfmath@xc=#1pt\relax%
+    \ifdim\pgfmath@xc<-9pt%
+      \pgfmath@x=1sp\relax%
+    \else%
+      \ifdim\pgfmath@xc<0pt%
+        \pgfmath@xc=-\pgfmath@xc%
+      \fi%
+      \pgfmath@x=1pt\relax%
+      \pgfmath@xa=1pt\relax%
+      \pgfmath@xb=\pgfmath@x%
       \pgfmathloop%
-        \divide\pgfmath@xa by\pgfmathcounter
+        \divide\pgfmath@xa by\pgfmathcounter%
         \pgfmath@xa=\pgfmath@tonumber\pgfmath@xc\pgfmath@xa%
-        \advance\pgfmath@x by\pgfmath@xa
-      \ifdim\pgfmath@x=\pgfmath@xb
-      \else
-        \pgfmath@xb=\pgfmath@x
+        \advance\pgfmath@x by\pgfmath@xa%
+      \ifdim\pgfmath@x=\pgfmath@xb%
+      \else%
+        \pgfmath@xb=\pgfmath@x%
       \repeatpgfmathloop%
-      \ifdim\pgfmath@yc<0pt
+      \ifdim#1pt<0pt%
         \pgfmathreciprocal@{\pgfmath@tonumber\pgfmath@x}%
-        \pgfmath@x=\pgfmathresult pt\relax
-      \fi
-    \fi
+        \pgfmath@x=\pgfmathresult pt\relax%
+      \fi%
+    \fi%
     \pgfmath@returnone\pgfmath@x%
-  \endgroup
+  \endgroup%
 }
 
 % sqrt function.
@@ -742,42 +664,34 @@
   \begingroup%
     \pgfmath@xa=#1pt%
     \pgfmath@xb=#2pt%
-    \ifdim\pgfmath@xa=0pt\relax%
-      \ifdim\pgfmath@xb=0pt\relax%
-        \pgfmath@x=1pt\relax%
-      \else%
-        \pgfmath@x=0pt\relax%
-      \fi%
-    \else%
-      \afterassignment\pgfmath@x%
-      \expandafter\c@pgfmath@counta\the\pgfmath@xb\relax%
-      \ifnum\c@pgfmath@counta<0\relax%
-        \c@pgfmath@counta=-\c@pgfmath@counta%
-        \pgfmathreciprocal@{#1}%
-        \pgfmath@xa=\pgfmathresult pt\relax%
-      \fi
-      \ifdim\pgfmath@x=0pt\relax%
-        \pgfmath@x=1pt\relax%
-        \pgfmathloop%
-          \ifnum\c@pgfmath@counta>0\relax%
-            \ifodd\c@pgfmath@counta%
-              \pgfmath@x=\pgfmath@tonumber{\pgfmath@x}\pgfmath@xa%
-            \fi
-            \ifnum\c@pgfmath@counta>1\relax%
-              \pgfmath@xa=\pgfmath@tonumber{\pgfmath@xa}\pgfmath@xa%
-            \fi%
-            \divide\c@pgfmath@counta by2\relax%
-        \repeatpgfmathloop%
-      \else%
-        \pgfmathln@{#1}%
-        \pgfmath@x=\pgfmathresult pt\relax%
-        \pgfmath@x=\pgfmath@tonumber{\pgfmath@xb}\pgfmath@x%
-        \pgfmathexp@{\pgfmath@tonumber{\pgfmath@x}}%
-        \pgfmath@x=\pgfmathresult pt\relax%
-      \fi%
-    \fi              
-    \pgfmath@returnone\pgf@x%
-  \endgroup%
+    \afterassignment\pgfmath@x%
+		\expandafter\c@pgfmath@counta\the\pgfmath@xb\relax%
+		\ifnum\c@pgfmath@counta<0\relax%
+			\c@pgfmath@counta=-\c@pgfmath@counta%
+			\pgfmathreciprocal@{#1}%
+			\pgfmath@xa=\pgfmathresult pt\relax%
+		\fi
+		\ifdim\pgfmath@x=0pt\relax%
+			\pgfmath@x=1pt\relax%
+			\pgfmathloop%
+				\ifnum\c@pgfmath@counta>0\relax%
+					\ifodd\c@pgfmath@counta%
+						\pgfmath@x=\pgfmath@tonumber{\pgfmath@x}\pgfmath@xa%
+					\fi
+					\ifnum\c@pgfmath@counta>1\relax%
+						\pgfmath@xa=\pgfmath@tonumber{\pgfmath@xa}\pgfmath@xa%
+					\fi%
+					\divide\c@pgfmath@counta by2\relax%
+			\repeatpgfmathloop%
+		\else%
+			\pgfmathln@{#1}%
+			\pgfmath@x=\pgfmathresult pt\relax%
+			\pgfmath@x=\pgfmath@tonumber{\pgfmath@xb}\pgfmath@x%
+			\pgfmathexp@{\pgfmath@tonumber{\pgfmath@x}}%
+			\pgfmath@x=\pgfmathresult pt\relax%
+		\fi%
+		\pgfmath@returnone\pgf@x%
+	\endgroup%
 }
 
 % factorial function.
@@ -797,7 +711,3 @@
 		\pgfmath@smuggleone\pgfmathresult%
 	\endgroup%
 }
-
-% Local Variables:
-% coding: undecided-unix
-% End:

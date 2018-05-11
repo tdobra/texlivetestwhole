@@ -7,7 +7,7 @@
 %
 % See the file doc/generic/pgf/licenses/LICENSE for more details.
 
-\ProvidesPackageRCS[v\pgfversion] $Header: /cvsroot/pgf/pgf/generic/pgf/systemlayer/pgfsys.code.tex,v 1.48 2014/07/09 14:01:22 cfeuersaenger Exp $
+\ProvidesPackageRCS[v\pgfversion] $Header: /cvsroot/pgf/pgf/generic/pgf/systemlayer/pgfsys.code.tex,v 1.37 2010/06/30 13:06:37 ludewich Exp $
 
 
 % Load key mechanism
@@ -16,10 +16,6 @@
 % "pgf" is a family
 \pgfkeys{/pgf/.is family}
 \def\pgfset{\pgfqkeys{/pgf}}
-
-% This is if is needed *very* early
-\newif\ifpgfpicture
-
 
 %
 % The following conversion functions are used to convert from TeX
@@ -70,28 +66,6 @@
 \newcount\c@pgf@countc
 \newcount\c@pgf@countd
 
-\newtoks\t@pgf@toka
-\newtoks\t@pgf@tokb
-\newtoks\t@pgf@tokc
-
-% Ensure that math registers are the same (math is broken in case it
-% is loaded first)
-\let\pgfmath@x\pgf@x
-\let\pgfmath@xa\pgf@xa
-\let\pgfmath@xb\pgf@xb
-\let\pgfmath@xc\pgf@xc
-
-\let\pgfmath@y\pgf@y
-\let\pgfmath@ya\pgf@ya
-\let\pgfmath@yb\pgf@yb
-\let\pgfmath@yc\pgf@yc
-
-\let\c@pgfmath@counta\c@pgf@counta
-\let\c@pgfmath@countb\c@pgf@countb
-\let\c@pgfmath@countc\c@pgf@countc
-\let\c@pgfmath@countd\c@pgf@countd
-
-
 
 % The following \if decides, whether even-odd filling and clipping is
 % to be used or normal the non-zero winding number rule. See the
@@ -122,7 +96,8 @@
   \expandafter\ifx\csname pgf@sys@fail@#1\endcsname\pgfutil@empty%
   \else%
     \expandafter\global\expandafter\let\csname pgf@sys@fail@#1\endcsname=\pgfutil@empty%
-    \pgfwarning{Your graphic driver \pgfsysdriver\space does not support #1. This warning is given only once}%
+    \PackageWarning{pgf}{%
+      Your graphic driver \pgfsysdriver\space does not support #1. This warning is given only once}%
   \fi%
 }
 
@@ -156,31 +131,33 @@
 %
 
 \def\pgfsys@moveto#1#2{\pgf@sys@fail{path constructions}}
-% This command is used to start a path at a specific point (#1,#2)
-% or to move the current point of the current path to (#1,#2)
+% This command is used to start a path at a specific point (#1bp,#2bp)
+% or to move the current point of the current path to (#1bp,#2bp)
 % without drawing anything upon stroking (the current path is
 % `interrupted'). 
 %
-% The arguments must be dimensions (like |10pt|).
+% Here (and in the following) the coordinates are in TeX's big points
+% (bp), unless the coordinate system has been scaled. A big point is
+% 1/72 inches. Note that TeX's point pt is 1/72.27 inches.
 %
 % Example:
 %
-% \pgfsys@moveto{10pt}{10pt}
-% \pgfsys@lineto{0pt}{0pt}
+% \pgfsys@moveto{10}{10}
+% \pgfsys@lineto{0}{0}
 % \pgfsys@stroke
 %
-% This will draw a line from (10pt,10pt) to the origin of the picture.
+% This will draw a line from (10bp,10bp) to the origin of the picture.
 
 \def\pgfsys@lineto#1#2{\pgf@sys@fail{path constructions}}
-% Continue the current path to (#1,#2) with a line.
+% Continue the current path to (#1bp,#2bp) with a line.
 
 \def\pgfsys@curveto#1#2#3#4#5#6{\pgf@sys@fail{path constructions}}
-% Continue the current path with a bezier curver to (#5,#6). The
-% control points of the curve are at (#1,#2) and (#3,#4).
+% Continue the current path with a bezier curver to (#5bp,#6bp). The
+% control points of the curve are at (#1bp,#2bp) and (#3bp,#4bp).
 
 \def\pgfsys@rect#1#2#3#4{\pgf@sys@fail{path constructions}}
 % Append a rectangle to the current path whose lower left corner is at
-% (#1,#2) and whose width/height is given by (#3,#4).
+% (#1bp,#2bp) and whose width/height is given by (#3bp,#4bp).
 %
 % This command can be `mapped back' to moveto and lineto commands, but
 % it is included since pdf has a special, quick version of this command.
@@ -329,7 +306,7 @@
 %
 %
 \def\pgfsys@setlinewidth#1{\pgf@sys@fail{setting the line width}}
-% Sets the width of lines, when stroked, to #1.
+% Sets the width of lines, when stroked, to #1bp.
 
 \def\pgfsys@buttcap{\pgf@sys@fail{setting the line cap}}
 % Sets the cap to a butt cap. See \pgfsys@stroke.
@@ -354,21 +331,22 @@
 % Sets the join to a bevel join. See \pgfsys@stroke.
 
 \def\pgfsys@setdash#1#2{\pgf@sys@fail{setting the dashing pattern}}
-% Sets the dashing patter. #1 should be a list of lengths separated by
-% spaces. #2 should be a single dimension.
+% Sets the dashing patter. #1 should be a list of lengths given in big
+% points (bp) separated by spaces. #2 should be a single value given
+% in bp.
 %
 % The list of values in #1 is used to determine the lengths of the
 % `on' phases of the dashing and of the `off' phases. For example, if
-% #1 is `3pt 4pt', then the dashing pattern is `3pt on followed by 4pt
-% off, followed by 3pt on, followed by 4pt off, and so on'. A pattern
-% of `.5pt 4pt 3pt 1.5pt' means `.5pt on, 4pt off, 3pt on, 1.5pt off, .5pt on,
+% #1 is `3 4', then the dashing pattern is `3bp on followed by 4bp
+% off, followed by 3bp on, followed by 4bp off, and so on'. A pattern
+% of `.5 4 3 1.5' means `.5bp on, 4bp off, 3bp on, 1.5bp off, .5bp on,
 % ...'. If the number of entries is odd, the last one is used twice,
-% so `3pt' means `3pt on, 3pt off, 3pt on, 3pt off,...'. An empty list
+% so `3' means `3bp on, 3bp off, 3bp on, 3bp off,...'. An empty list
 % means `always on'.
 %
 % The second argument determines the `phase' of the pattern. For
-% example, for a pattern of `3pt 4pt' and a phase of `1pt', the pattern
-% would start: `2pt on, 4pt off, 3pt on, 4pt off, 3pt on, 4pt off...'.
+% example, for a pattern of `3 4' and a phase of `1', the pattern
+% would start: `2bp on, 4bp off, 3bp on, 4bp off, 3bp on, 4bp off...'.
 
 
 
@@ -531,17 +509,6 @@
 % overlap will be darker than the rest. By comparison, if the circles
 % are part of a transparency group, the overlap will get the same
 % color as the rest.
-%
-% The following settings modify the bevahiour of a transparency group:
-
-\newif\ifpgfsys@transparency@group@isolated
-\newif\ifpgfsys@transparency@group@knockout
-
-
-\def\pgfsys@blend@mode#1{\pgf@sys@fail{blend mode}}
-% Sets the current blend mode. See the PDF specification for details
-% on blend modes.
-
 
 \def\pgfsys@definemask{\pgf@sys@fail{image masks}}
 % This command declares a mask for usage with images. It works similar
@@ -664,48 +631,11 @@
 % Page size stuff
 %
 %
-
 \def\pgfsys@papersize#1#2{\pgf@sys@fail{papersize}}
-% This command sets the paper size in a portable way. It tries to do
-% so "locally" for the current page, but what really happens depends
-% strongly on the driver. For instance, dvips will use whatever is
-% used with the first call to this command that is part of the
-% shipped-out document and will ignore all other uses. In contrast,
-% pdftex will use the current value of the papersize for each page
-% and, additionally, setting the papersize is local to the current TeX
-% group. 
+% This command sets the paper size in a portable way.
 % #1 = width
 % #2 = height
 
-\def\pgfsys@global@papersize#1#2{\pgfsys@papersize{#1}{#2}}
-% This command does the same as the papersize command, only for
-% drivers that support this, \global is used to set the papersize. 
-% #1 = width
-% #2 = height
-
-\def\pgfsys@prepare@papersize#1#2{\pgfsys@papersize{#1}{#2}}
-% Like \pgfsys@papersize, this prepares the paper size in a portable
-% way -- but it is supposed to be a preparation step before the
-% document has started. Drivers may decide to postpone the action
-% until the document has started.
-%
-% The root cause why I added this method is that image externalization
-% seems to suffer from the fact that some drivers need a "prepared"
-% routine whereas others must not have a prepared routine and have to
-% apply the action right-away. This method is the solution for image
-% externalization.
-% #1 = width
-% #2 = height
-
-\ifx\paperheight\@undefined
-  \def\pgfsys@thepageheight{\the\vsize} % this is wrong, but I do not
-                                % know how to compute the page height
-                                % in plain tex.
-  \def\pgfsys@thepagewidth{\the\hsize}
-\else
-  \def\pgfsys@thepageheight{\paperheight}
-  \def\pgfsys@thepagewidth{\paperwidth}
-\fi
 
 
 %
@@ -775,7 +705,7 @@
 
 \def\pgfsys@transformshift#1#2{\pgfsys@transformcm{1}{0}{0}{1}{#1}{#2}}
 % This command will change the origin of the low-level coordinate
-% system to (#1,#2).
+% system to (#1bp,#2bp).
 
 \def\pgfsys@transformxyscale#1#2{\pgfsys@transformcm{#1}{0}{0}{#2}{0bp}{0bp}}
 % This command will scale the low-level coordinate system (and
@@ -808,20 +738,6 @@
 % choose to use a ``TeX-translation'' for the translation part of the
 % transformation cm. This will ensure that hyperlinks ``survive'' at
 % least translations. 
-
-\def\pgfsys@pictureboxsynced#1{%
-  {%
-    \setbox0=\hbox{\pgfsys@beginpicture\box#1\pgfsys@endpicture}%
-    \pgfsys@hboxsynced0%
-  }%
-}
-% Basically, this should do the same as doing a (scoped) low level sync
-% followed by inserting the box #1 directly into the output
-% stream. However, the default implementation uses \pgfsys@hboxsynced
-% in conjunction with \pgfsys@beginpicture to ensure that, if
-% possible, hyperlinks survive in pdfs. Drivers that are sensitive to
-% picture-in-picture scopes shuold replace this implementation by
-% \pgfsys@beginscope\pgflowlevelsynccm\box#1\pgfsys@endscope
 
 \def\pgfsys@beginpicture{}
 % Called at the beginning of a pgfpicture. Used to setup things.
@@ -919,9 +835,7 @@
   {%
     \pgfsysprotocol@setcurrentprotocol\pgfutil@empty%
     \pgfsysprotocol@bufferedtrue%
-    \pgfsys@beginscope%
     #4%
-    \pgfsys@endscope%
     \pgfsysprotocol@getcurrentprotocol\pgfsys@@temp%
     \expandafter\global\expandafter\let\csname #1\endcsname=\pgfsys@@temp%
   }%
@@ -983,9 +897,9 @@
 
 \input pgf.cfg
 
-\immediate\write-1{Driver file for pgf: \pgfsysdriver}
+\PackageInfo{pgfsys}{Driver file for pgf: \pgfsysdriver}
 \pgfutil@InputIfFileExists{\pgfsysdriver}{}{%
-  \pgferror{Driver file ``\pgfsysdriver'' not found.}}
+  \PackageError{pgfsys}{Driver file ``\pgfsysdriver'' not found.}{}}
 
 
 

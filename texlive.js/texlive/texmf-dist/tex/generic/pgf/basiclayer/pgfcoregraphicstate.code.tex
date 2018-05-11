@@ -7,7 +7,7 @@
 %
 % See the file doc/generic/pgf/licenses/LICENSE for more details.
 
-\ProvidesFileRCS $Header: /cvsroot/pgf/pgf/generic/pgf/basiclayer/pgfcoregraphicstate.code.tex,v 1.12 2014/11/02 21:38:01 cfeuersaenger Exp $
+\ProvidesFileRCS $Header: /cvsroot/pgf/pgf/generic/pgf/basiclayer/pgfcoregraphicstate.code.tex,v 1.9 2008/04/22 17:03:26 tantau Exp $
 
 % Globals
 
@@ -123,16 +123,13 @@
 % \pgfsetstrokecolor{red}
 
 \def\pgfsetstrokecolor#1{%
-  \pgfutil@colorlet{pgfstrokecolor}{#1}%
-  \pgfutil@ifundefined{applycolormixins}{}{\applycolormixins{pgfstrokecolor}}%
-  \expandafter\let\expandafter\pgf@temp\csname\string\color@pgfstrokecolor\endcsname
-  % for arrow tips:
-  \global\let\pgf@strokecolor@global=\pgf@temp
-  \expandafter\pgf@setstrokecolor\pgf@temp%
+  \pgfutil@colorlet{pgf@tempcolor}{#1}%
+  \pgfutil@ifundefined{applycolormixins}{}{\applycolormixins{pgf@tempcolor}}%
+  \expandafter\expandafter\expandafter\pgf@setstrokecolor\csname\string\color@pgf@tempcolor\endcsname%
 }
 \def\pgf@setstrokecolor#1#2#3#4#5{%
   \expandafter\ifx\csname pgfsys@color@#4@stroke\endcsname\relax%
-    \pgferror{Unsupported color model `#4'. Sorry}%
+    \PackageError{pgfbase}{Unsupported color model `#4'. Sorry}{}%
   \else%
     \edef\pgf@colmarshal{\expandafter\noexpand\csname pgfsys@color@#4@stroke\endcsname}%
     \pgf@uncomma#5,,%
@@ -158,16 +155,13 @@
 % \pgfsetfillcolor{gray}
 
 \def\pgfsetfillcolor#1{%
-  \pgfutil@colorlet{pgffillcolor}{#1}%
-  \pgfutil@ifundefined{applycolormixins}{}{\applycolormixins{pgffillcolor}}%
-  \expandafter\let\expandafter\pgf@temp\csname\string\color@pgffillcolor\endcsname
-  % for arrow tips:
-  \global\let\pgf@fillcolor@global=\pgf@temp
-  \expandafter\pgf@setfillcolor\pgf@temp
+  \pgfutil@colorlet{pgf@tempcolor}{#1}%
+  \pgfutil@ifundefined{applycolormixins}{}{\applycolormixins{pgf@tempcolor}}%
+  \expandafter\expandafter\expandafter\pgf@setfillcolor\csname\string\color@pgf@tempcolor\endcsname%
 }
 \def\pgf@setfillcolor#1#2#3#4#5{%
   \expandafter\ifx\csname pgfsys@color@#4@fill\endcsname\relax%
-    \pgferror{Unsupported color model `#4'. Sorry}%
+    \PackageError{pgfbase}{Unsupported color model `#4'. Sorry}{}%
   \else%
     \edef\pgf@colmarshal{\expandafter\noexpand\csname pgfsys@color@#4@fill\endcsname}%
     \pgf@uncomma#5,,%
@@ -183,17 +177,13 @@
 % \pgfsetcolor{blue}
 
 \def\pgfsetcolor#1{%
-  \pgfutil@colorlet{pgfstrokecolor}{#1}%
-  \pgfutil@ifundefined{applycolormixins}{}{\applycolormixins{pgfstrokecolor}}%
-  \expandafter\let\expandafter\pgf@temp\csname\string\color@pgfstrokecolor\endcsname
-  % for arrow tips:
-  \global\let\pgf@strokecolor@global=\pgf@temp
-  \global\let\pgf@fillcolor@global=\pgf@temp
-  \expandafter\pgf@setcolor\pgf@temp%
+  \pgfutil@colorlet{pgf@tempcolor}{#1}%
+  \pgfutil@ifundefined{applycolormixins}{}{\applycolormixins{pgf@tempcolor}}%
+  \expandafter\expandafter\expandafter\pgf@setcolor\csname\string\color@pgf@tempcolor\endcsname%
 }
 \def\pgf@setcolor#1#2#3#4#5{%
   \expandafter\ifx\csname pgfsys@color@#4\endcsname\relax%
-    \pgferror{Unsupported color model `#4'. Sorry}%
+    \PackageError{pgfbase}{Unsupported color model `#4'. Sorry}{}%
   \else%
     \edef\pgf@colmarshal{\expandafter\noexpand\csname pgfsys@color@#4\endcsname}%
     \pgf@uncomma#5,,%

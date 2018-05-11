@@ -15,18 +15,10 @@
 % prints out a message to the log.
 
 
-%\def\pgfversion{3.0.1-cvs}
-\def\pgfversion{3.0.1a}
-
-\begingroup
-\catcode`\"=12
-\pgfutil@IfUndefined{directlua}{}{%
-	\directlua{pgf = {}; pgf.pgfversion = "\pgfversion"}%
-}%
-\endgroup
-
-%\def\pgftypesetversion{\oldstylenums{3}.\oldstylenums{0}.\oldstylenums{1}-cvs}
-\def\pgftypesetversion{\oldstylenums{3}.\oldstylenums{0}.\oldstylenums{1}a}
+%\def\pgfversion{2.00-cvs}
+%\def\pgftypesetversion{\oldstylenums{2}.\oldstylenums{00}--\textsc{cvs}}
+\def\pgfversion{2.10}
+\def\pgftypesetversion{\oldstylenums{2}.\oldstylenums{10}}
 
 
 \ifx\pgfrcsloaded\undefined
@@ -97,13 +89,9 @@
   \def\ProvidesFile#1[#2]{\wlog{Loading file #1 version #2.}}
 \fi
 
-\ProvidesPackageRCS[v\pgfversion] $Header: /cvsroot/pgf/pgf/generic/pgf/utilities/pgfrcs.code.tex,v 1.31 2015/08/07 10:17:34 cfeuersaenger Exp $
+\ProvidesPackageRCS[v\pgfversion] $Header: /cvsroot/pgf/pgf/generic/pgf/utilities/pgfrcs.code.tex,v 1.24 2010/10/25 20:57:06 ludewich Exp $
 
 \catcode`\@=\pgfrcsatcode
 
 \fi
 
-
-% Local Variables:
-% coding: undecided-unix
-% End:

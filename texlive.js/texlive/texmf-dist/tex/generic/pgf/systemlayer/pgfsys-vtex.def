@@ -7,7 +7,7 @@
 %
 % See the file doc/generic/pgf/licenses/LICENSE for more details.
 
-\ProvidesFileRCS $Header: /cvsroot/pgf/pgf/generic/pgf/systemlayer/pgfsys-vtex.def,v 1.10 2013/07/15 12:05:34 tantau Exp $
+\ProvidesFileRCS $Header: /cvsroot/pgf/pgf/generic/pgf/systemlayer/pgfsys-vtex.def,v 1.8 2007/12/12 16:57:17 tantau Exp $
 
 
 % Driver commands for vtex
@@ -47,7 +47,7 @@
 \def\pgf@sys@vtex@@setcolor#1#2#3#4#5{%
   \pgfsysps@color@resetnow%
   \expandafter\ifx\csname pgfsys@color@#4\endcsname\relax%
-    \pgferror{Unsupported color model `#4'. Sorry}%
+    \PackageError{pgfbase}{Unsupported color model `#4'. Sorry}{}%
   \else%
     \edef\pgf@colmarshal{\expandafter\noexpand\csname pgfsys@color@#4\endcsname}%
     \pgf@uncomma#5,,%
@@ -91,13 +91,6 @@
     /pgfw{setlinewidth} bind def % setlinewidth
     }
 }
-
-% vtex commands for changing the paper size
-\def\pgfsys@papersize#1#2{\mediawidth#1\mediaheight#2}
-  
-  
-
-
 
 \endinput
 

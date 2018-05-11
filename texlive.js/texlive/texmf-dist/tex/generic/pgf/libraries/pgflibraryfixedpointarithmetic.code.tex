@@ -83,8 +83,8 @@
 \def\pgfmathfp@parser@install{%
 	%
 	\expandafter\ifx\csname FP@version\endcsname\relax%
-		\pgferror{You need to say `\string\usepackage{fp}' to use %
-		  fixed point arithmetic}%
+		\PackageError{pgf}{You need to say `\string\usepackage{fp}' to use %
+		  fixed point arithmetic}{}%
 	\else%
 	  %
 		% Don't want messages.
@@ -273,7 +273,7 @@
 }
 \def\pgfmathfpabs@#1{%
 	\begingroup%
-		\FPabs\pgfmathresult{#1}%
+		\FPabs\pgfmathresult{#1}
 	\pgfmath@smuggleone\pgfmathresult%
 	\endgroup%
 }
@@ -561,7 +561,7 @@
 	\begingroup%
 		\FPmul\pgfmathresult{#1}{0.017453292519943295}%
 		\FPcos\pgfmathresult{\pgfmathresult}%
-		\FPdiv\pgfmathresult{1}{\pgfmathresult}%
+		\FPdiv\pgfmathresult{1}{\pgfmathresult}		
 		\pgfmath@smuggleone\pgfmathresult%
 	\endgroup%
 }
@@ -576,7 +576,7 @@
 	\begingroup%
 		\FPmul\pgfmathresult{#1}{0.017453292519943295}%
 		\FPsin\pgfmathresult{\pgfmathresult}%
-		\FPdiv\pgfmathresult{1}{\pgfmathresult}%
+		\FPdiv\pgfmathresult{1}{\pgfmathresult}		
 		\pgfmath@smuggleone\pgfmathresult%
 	\endgroup%
 }

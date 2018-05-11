@@ -7,7 +7,7 @@
 %
 % See the file doc/generic/pgf/licenses/LICENSE for more details.
 
-\ProvidesFileRCS $Header: /cvsroot/pgf/pgf/generic/pgf/basiclayer/pgfcorescopes.code.tex,v 1.46 2015/05/08 10:23:50 tantau Exp $
+\ProvidesFileRCS $Header: /cvsroot/pgf/pgf/generic/pgf/basiclayer/pgfcorescopes.code.tex,v 1.34 2010/09/08 15:07:18 tantau Exp $
 
 % Globals
 
@@ -50,14 +50,10 @@
   \pgfsys@beginscope%
     \pgf@resetpathsizes%
     \edef\pgfscope@linewidth{\the\pgflinewidth}%
-    \let\pgfscope@stroke@color=\pgf@strokecolor@global%
-    \let\pgfscope@fill@color=\pgf@fillcolor@global%
     \begingroup}
 \def\endpgfscope{%
     \endgroup%
     \global\pgflinewidth=\pgfscope@linewidth%
-    \global\let\pgf@strokecolor@global=\pgfscope@stroke@color%
-    \global\let\pgf@fillcolor@global=\pgfscope@fill@color%
   \pgfsys@endscope}
 
 
@@ -120,8 +116,6 @@
   \expandafter\pgf@text@setkeys\expandafter{\pgf@text@options}%
   \csname pgf@halign\pgf@text@hshift\endcsname%
   \csname pgf@valign\pgf@text@vshift\endcsname%
-  %
-  \pgfapproximatenonlineartransformation%
   % Protocol sizes:
   \pgf@process{\pgfpointtransformed{\pgfqpoint{0pt}{\dp\pgf@hbox}}}%
   \pgf@protocolsizes{\pgf@x}{\pgf@y}%
@@ -196,6 +190,8 @@
 %   \pgfusepath{stroke}
 % \end{pgfpicture}
 
+\newif\ifpgfpicture
+
 \def\pgfresetboundingbox{%
     \global\pgf@picmaxx=-16000pt\relax%
     \global\pgf@picminx=16000pt\relax%
@@ -261,26 +257,23 @@
               \pgf@relevantforpicturesizefalse%
               \pgf@process{\pgf@baseline}%
               \xdef\pgf@shift@baseline{\the\pgf@y}%
-              % 
+			  %
               \pgf@process{\pgf@trimleft}%
               \global\advance\pgf@x by-\pgf@picminx
-              % prepare \hskip\pgf@trimleft@final.
+			  % prepare \hskip\pgf@trimleft@final.
               % note that \pgf@trimleft@final is also queried
               % by the pgf image externalization.
               \xdef\pgf@trimleft@final{-\the\pgf@x}%
-              % 
+			  %
               \pgf@process{\pgf@trimright}%
               \global\advance\pgf@x by-\pgf@picmaxx
-              % prepare \hskip\pgf@trimright@final.
+			  % prepare \hskip\pgf@trimright@final.
               % note that \pgf@trimright@final is also queried
               % by the pgf image externalization.
               \xdef\pgf@trimright@final{\the\pgf@x}%
-        %
-        \pgf@remember@layerlist@globally
             \endgroup%
             \hss%
           \egroup%
-      \pgf@restore@layerlist@from@global
           \pgf@insertlayers%
         \endgroup%    
         \pgfsys@discardpath%
@@ -294,12 +287,6 @@
   \endgroup%
 }
 
-\def\pgf@remember@layerlist@globally{%
-  \global\let\pgf@layerlist@=\pgf@layerlist
-}%
-\def\pgf@restore@layerlist@from@global{%
-  \let\pgf@layerlist=\pgf@layerlist@
-}%
 \def\pgf@insertlayers{%
   \box\pgf@layerbox@main%
 }
@@ -369,20 +356,20 @@
 % \pgfsetbaseline{default}% resets to default value
 
 \def\pgfsetbaseline#1{%
-  \def\pgf@temp{#1}%
-  \ifx\pgf@temp\pgf@default@text
-    \pgfsetbaseline{\pgf@picminy}%
-  \else
-    \pgfsetbaselinepointlater{\pgfpoint{0pt}{#1}}%
-  \fi
+	\def\pgf@temp{#1}%
+	\ifx\pgf@temp\pgf@default@text
+		\pgfsetbaseline{\pgf@picminy}%
+	\else
+		\pgfsetbaselinepointlater{\pgfpoint{0pt}{#1}}%
+	\fi
 }
 \pgfsetbaseline{\pgf@picminy}
 
 % controls how the image externalization implements trim:
 \newif\ifpgf@trim@lowlevel
 \pgfkeys{
-  /pgf/trim lowlevel/.is if=pgf@trim@lowlevel,
-  /pgf/trim lowlevel/.default=true,
+	/pgf/trim lowlevel/.is if=pgf@trim@lowlevel,
+	/pgf/trim lowlevel/.default=true,
 }
 
 % Same as the y-baseline for horizontal alignment.
@@ -398,12 +385,12 @@
 % or
 % \pgfsettrimleft{default}
 \def\pgfsettrimleft#1{%
-  \def\pgf@temp{#1}%
-  \ifx\pgf@temp\pgf@default@text
-    \pgfsettrimleft{\pgf@picminx}
-  \else
-    \pgfsettrimleftpointlater{\pgfpoint{#1}{0pt}}%
-  \fi
+	\def\pgf@temp{#1}%
+	\ifx\pgf@temp\pgf@default@text
+		\pgfsettrimleft{\pgf@picminx}
+	\else
+		\pgfsettrimleftpointlater{\pgfpoint{#1}{0pt}}%
+	\fi
 }
 \pgfsettrimleft{\pgf@picminx}
 
@@ -417,12 +404,12 @@
 % or
 % \pgfsettrimright{default}
 \def\pgfsettrimright#1{%
-  \def\pgf@temp{#1}%
-  \ifx\pgf@temp\pgf@default@text
-    \pgfsettrimright{\pgf@picmaxx}%
-  \else
-    \pgfsettrimrightpointlater{\pgfpoint{#1}{0pt}}%
-  \fi
+	\def\pgf@temp{#1}%
+	\ifx\pgf@temp\pgf@default@text
+		\pgfsettrimright{\pgf@picmaxx}%
+	\else
+		\pgfsettrimrightpointlater{\pgfpoint{#1}{0pt}}%
+	\fi
 }
 \pgfsettrimright{\pgf@picmaxx}
 
@@ -458,7 +445,6 @@
   \pgfsyssoftpath@setcurrentpath\pgfutil@empty%
   \edef\pgfscope@linewidth{\the\pgflinewidth}%
   \let\pgf@interrupt@lastmoveto=\pgfsyssoftpath@lastmoveto%
-  \let\pgf@interrupt@nlt@infos=\pgf@nlt@infos%
   \begingroup%
 }
 \def\endpgfinterruptpath
@@ -467,10 +453,9 @@
   \global\pgflinewidth=\pgfscope@linewidth%
   \pgfsyssoftpath@setcurrentpath\pgf@interrupt@path%
   \pgf@setpathsizes\pgf@interrupt@pathsizes%
-  \global\pgf@path@lastx\pgf@interrupt@savex%
-  \global\pgf@path@lasty\pgf@interrupt@savey%
-  \global\let\pgfsyssoftpath@lastmoveto\pgf@interrupt@lastmoveto%
-  \global\let\pgf@nlt@infos=\pgf@interrupt@nlt@infos%
+  \global\pgf@path@lastx=\pgf@interrupt@savex%
+  \global\pgf@path@lasty=\pgf@interrupt@savey%
+  \global\let\pgfsyssoftpath@lastmoveto=\pgf@interrupt@lastmoveto%
   \endgroup%
 }
 
@@ -584,5 +569,6 @@
 
 \let\pgf@savelayers=\relax
 \let\pgf@restorelayers=\relax
+
 
 \endinput

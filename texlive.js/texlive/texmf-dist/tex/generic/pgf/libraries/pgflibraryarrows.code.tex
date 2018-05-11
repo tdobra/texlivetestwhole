@@ -7,12 +7,12 @@
 %
 % See the file doc/generic/pgf/licenses/LICENSE for more details.
 
-\ProvidesFileRCS[v\pgfversion] $Header: /cvsroot/pgf/pgf/generic/pgf/libraries/pgflibraryarrows.code.tex,v 1.16 2013/09/23 18:04:35 tantau Exp $
+\ProvidesFileRCS[v\pgfversion] $Header: /cvsroot/pgf/pgf/generic/pgf/libraries/pgflibraryarrows.code.tex,v 1.9 2008/10/27 21:00:46 tantau Exp $
 
 
 % A square bracket shaped arrow
 
-\pgfarrowsdeclare{square bracket}{square bracket}
+\pgfarrowsdeclare{[}{]}
 {
   \pgfutil@tempdima=1pt%
   \advance\pgfutil@tempdima by1.25\pgflinewidth%
@@ -33,7 +33,6 @@
   \pgfpathlineto{\pgfqpoint{-.5\pgfutil@tempdimb}{\pgfutil@tempdima}}
   \pgfusepathqstroke
 }
-\pgfdeclarearrow{name=[-], means=square bracket}
 
 \pgfarrowsdeclarereversed{]}{[}{[}{]}
 
@@ -149,7 +148,7 @@
 {
   \pgfutil@tempdima=0.4pt%
   \advance\pgfutil@tempdima by.2\pgflinewidth%
-  \pgfutil@tempdimb=7.5\pgfutil@tempdima\advance\pgfutil@tempdimb by.5\pgflinewidth
+  \pgfutil@tempdimb=5.5\pgfutil@tempdima\advance\pgfutil@tempdimb by\pgflinewidth
   \pgfarrowsleftextend{+-\pgfutil@tempdimb}
   \pgfutil@tempdimb=1.5\pgfutil@tempdima\advance\pgfutil@tempdimb by.5\pgflinewidth
   \pgfarrowsrightextend{+\pgfutil@tempdimb}
@@ -235,7 +234,7 @@
 {
  \arrowsize=0.4pt
  \advance\arrowsize by.275\pgflinewidth%
- \pgfarrowsleftextend{-7\arrowsize-.5\pgflinewidth}
+ \pgfarrowsleftextend{+-\arrowsize}
  \advance\arrowsize by.5\pgflinewidth
  \pgfarrowsrightextend{+\arrowsize}
 }
@@ -510,7 +509,6 @@
   {\pgfqpoint{-1\pgfutil@tempdima}{-1.5\pgfutil@tempdima}}
   {\pgfqpoint{3.5\pgfutil@tempdima}{-.5\pgfutil@tempdima}}
   {\pgfqpoint{6\pgfutil@tempdima}{0\pgfutil@tempdima}}
-  \pgfpathclose
   \pgfusepathqfill
 }
 
@@ -827,7 +825,6 @@
   \pgfpathlineto{\pgfqpoint{\pgflinewidth}{0pt}}
   \pgfpathlineto{\pgfqpoint{.5\pgflinewidth}{-.5\pgflinewidth}}
   \pgfpathlineto{\pgfqpoint{-.1\pgflinewidth}{-0.5\pgflinewidth}}
-  \pgfpathclose
   \pgfusepathqfill
 }
 
@@ -842,7 +839,6 @@
   \pgfpathlineto{\pgfqpoint{-.1\pgflinewidth}{-.5\pgflinewidth}}
   \pgfpathlineto{\pgfqpoint{1\pgflinewidth}{-.5\pgflinewidth}}
   \pgfpathlineto{\pgfqpoint{0.5\pgflinewidth}{0\pgflinewidth}}
-  \pgfpathclose
   \pgfusepathqfill
 }
 
@@ -908,13 +904,12 @@
 {
   \pgfmathsetlength{\pgfutil@tempdima}{.25\pgflinewidth+.25*\pgfinnerlinewidth}%
   \pgfmathsetlength{\pgfutil@tempdimb}{.5\pgflinewidth-.5*\pgfinnerlinewidth}%
-  \pgfarrowsrightextend{2.06\pgfutil@tempdima+.5\pgfutil@tempdimb}
-  \pgfarrowsleftextend{-1.36\pgfutil@tempdima-.5\pgfutil@tempdimb}
+  \pgfarrowsrightextend{2\pgfutil@tempdima+.5\pgfutil@tempdimb}
+  \pgfarrowsleftextend{1.3\pgfutil@tempdima+.5\pgfutil@tempdimb}
 }
 {
   \pgfmathsetlength{\pgfutil@tempdima}{.25\pgflinewidth+.25*\pgfinnerlinewidth}%
   \pgfmathsetlength{\pgfutil@tempdimb}{.5\pgflinewidth-.5*\pgfinnerlinewidth}%
-  \pgftransformxshift{.06\pgfutil@tempdima}
   \pgfsetlinewidth{\pgfutil@tempdimb}
   \pgfsetdash{}{+0pt}
   \pgfsetroundcap

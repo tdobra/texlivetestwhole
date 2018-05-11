@@ -14,7 +14,7 @@
 % scopes, essentially) at certain positions of a path.
 
 \pgfkeys{
-  /pgf/decoration/reset marks/.code=\let\pgf@lib@dec@mark@marks\pgfutil@empty,
+  /pgf/decoration/reset marks/.code=\let\pgf@lib@dec@mark@marks=\pgfutil@empty,
   /pgf/decoration/mark/.code=\pgf@lib@dec@parsemark#1\pgf@lib@dec@stop,
 }
 
@@ -33,8 +33,17 @@
 }
 
 \def\pgf@lib@dec@arrowhead#1#2{%
+  \expandafter\ifx\csname tikz@special@arrow@end#2\endcsname\relax% be nice to TikZ
+    \pgfsetarrowsend{#2}
+  \else%
+    \pgfsetarrowsend{\csname tikz@special@arrow@end#2\endcsname}%
+  \fi%
+  \pgf@x=0pt%
+  \pgf@shorten@end%
+  \pgftransformxshift{-\pgf@x}
   \pgftransformxscale{#1}
-  \pgfarrowdraw{#2}%
+  \pgflowlevelsynccm%
+  \pgflowlevelobj{}{\pgf@endarrow}%
 }
 
 \def\pgf@lib@dec@doarrowhead#1{%

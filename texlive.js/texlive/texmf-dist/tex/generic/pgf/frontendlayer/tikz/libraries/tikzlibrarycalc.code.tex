@@ -7,7 +7,7 @@
 %
 % See the file doc/generic/pgf/licenses/LICENSE for more details.
 
-\ProvidesFileRCS[v\pgfversion] $Header: /cvsroot/pgf/pgf/generic/pgf/frontendlayer/tikz/libraries/tikzlibrarycalc.code.tex,v 1.9 2013/07/15 12:05:31 tantau Exp $
+\ProvidesFileRCS[v\pgfversion] $Header: /cvsroot/pgf/pgf/generic/pgf/frontendlayer/tikz/libraries/tikzlibrarycalc.code.tex,v 1.6 2009/09/04 17:22:59 tantau Exp $
 
 %
 %
@@ -48,7 +48,7 @@
     \pgfutil@ifnextchar\n{%
       \tikz@cc@handle@num%
     }{%
-      \tikzerror{``\string\p'' or ``\string\n'' expected}%
+      \PackageError{tikz}{``\string\p'' or ``\string\n'' expected}{}%
     }%
   }%
 }
@@ -112,7 +112,7 @@
       \pgfutil@ifnextchar-{%
         \tikz@cc@sub%
       }{%
-        \tikzerror{+ or - expected}%
+        \PackageError{tikz}{+ or - expected}{}%
         \tikz@cc@end$%$
       }%
     }%
@@ -177,51 +177,23 @@
 % A coordinate can be followed by !...!(...)
 %
 
-\def\tikz@cc@mid@checks{%
-  \ifnum\the\catcode`\!=\active\relax
-    \expandafter\tikz@cc@mid@checks@active
-  \else
-    \expandafter\tikz@cc@mid@checks@nonactive
-  \fi}
-
-\def\tikz@cc@mid@checks@nonactive{%
+\def\tikz@cc@mid@checks{
   \pgfutil@ifnextchar!{%
-    \tikz@cc@mid@nonactive%
+    \tikz@cc@mid%
   }{%
-    \advance\pgf@xa by\tikz@cc@factor\pgf@xb
-    \advance\pgf@ya by\tikz@cc@factor\pgf@yb
-    \tikz@cc@parse%
+    \advance\pgf@xa by\tikz@cc@factor\pgf@xb%
+    \advance\pgf@ya by\tikz@cc@factor\pgf@yb%
+    \tikz@cc@parse% continue
   }%
 }
 
-\def\tikz@cc@mid@nonactive!{%
+\def\tikz@cc@mid!{%
   \pgfutil@ifnextchar({%
     \tikz@scan@one@point\tikz@cc@project%
   }{%
-    \tikz@cc@mid@num@nonactive%
+    \tikz@cc@mid@num%
   }%
 }
-
-\begingroup
-  \catcode`\!=\active
-  \gdef\tikz@cc@mid@checks@active{%
-    \pgfutil@ifnextchar!{%
-      \tikz@cc@mid@active%
-    }{%
-      \advance\pgf@xa by\tikz@cc@factor\pgf@xb
-      \advance\pgf@ya by\tikz@cc@factor\pgf@yb
-      \tikz@cc@parse%
-    }%
-  }
-
-  \gdef\tikz@cc@mid@active!{%
-    \pgfutil@ifnextchar({%
-      \tikz@scan@one@point\tikz@cc@project%
-    }{%
-      \tikz@cc@mid@num@active%
-    }%
-  }
-\endgroup
 
 %
 % Partway case: (coord a)!number!(coord b)
@@ -230,15 +202,7 @@
 % to b. This, (a)!0!(b) is (a), (a)!.5!(b) is the middle and (a)!1!(b)
 % is (b)
 %
-
-\def\tikz@cc@mid@num@nonactive#1!{\tikz@cc@mid@num{#1}}
-
-\begingroup
-  \catcode`\!=\active
-  \gdef\tikz@cc@mid@num@active#1!{\tikz@cc@mid@num{#1}}
-\endgroup
-
-\def\tikz@cc@mid@num#1{%
+\def\tikz@cc@mid@num#1!{%
   \pgfmathparse{#1}%
   \ifpgfmathunitsdeclared%
     \let\tikz@cc@mid@unit=\pgfmathresult%
@@ -289,27 +253,10 @@
   % Save in c
   \pgf@xc=\pgf@x%
   \pgf@yc=\pgf@y%
-  \begingroup
-    \ifnum\the\catcode`\!=\active
-      \def\tikz@next{%
-        \endgroup
-        \expandafter\tikz@cc@scan@rot\expandafter\tikz@cc@after@project
-        \tikz@cc@scan@ex@active}%
-    \else
-      \def\tikz@next{%
-        \endgroup
-        \expandafter\tikz@cc@scan@rot\expandafter\tikz@cc@after@project
-        \tikz@cc@scan@ex@nonactive}%
-    \fi
-    \tikz@next%
+  \expandafter\tikz@cc@scan@rot\expandafter\tikz@cc@after@project\tikz@cc@scan@ex%
 }
 
-\def\tikz@cc@scan@ex@nonactive!{}
-
-\begingroup
-  \catcode`\!=\active
-  \gdef\tikz@cc@scan@ex@active!{}
-\endgroup
+\def\tikz@cc@scan@ex!{}
 
 \def\tikz@cc@after@project#1{%
   \pgf@process{#1}%
@@ -337,27 +284,15 @@
     \tikz@scan@one@point#1% normal
   }%
   {
-    \def\tikz@cc@scan@rot@cmd{#1}%
-    \ifnum\the\catcode`\:=\active\relax
-      \expandafter\tikz@cc@scan@one@rot@active%
-    \else
-      \expandafter\tikz@cc@scan@one@rot@nonactive%
-    \fi
+    \def\tikz@cc@scan@rot@cmd{#1}
+    \tikz@cc@scan@one@rot%
   }%
 }
 
-\def\tikz@cc@scan@one@rot@nonactive#1:{%
+\def\tikz@cc@scan@one@rot#1:{%
   \def\tikz@cc@scan@rot@angle{#1}%
   \tikz@scan@one@point\tikz@cc@handle@rot%
 }
-
-\begingroup
-  \catcode`\:=\active
-  \gdef\tikz@cc@scan@one@rot@active#1:{%
-    \def\tikz@cc@scan@rot@angle{#1}%
-    \tikz@scan@one@point\tikz@cc@handle@rot%
-  }
-\endgroup
 
 \def\tikz@cc@handle@rot#1{%
   \pgf@process{#1}%
@@ -393,8 +328,8 @@
 {%
   \tikzset{cs/.cd,#1}%
   \expandafter\ifx\csname tikz@tangent@\tikz@cs@type\endcsname\relax%
-    \tikzerror{I do not know how to compute the tangent to 
-    a \tikz@cs@type}%
+    \PackageError{tikz}{I do not know how to compute the tangent to 
+    a \tikz@cs@type}{}%
     \pgfpointorigin%
   \else%
     \expandafter\tikz@scan@one@point\expandafter\tikz@lib@do@tangent\tikz@cs@point%  

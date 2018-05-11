@@ -28,9 +28,7 @@
 	\expandafter\ifx\csname pgfmath@function@#1\endcsname\relax%
 		\pgfmath@error{The function `#1' does not exist}{}%
 	\else%
-    % was: \pgfmath@namedef{pgfmath#1@}{#2}% TT
-    \edef\pgf@marshal{\noexpand\pgfmathdeclarefunction*{#1}{\csname	pgfmath@operation@#1@arity\endcsname}}%
-    \pgf@marshal{#2}%
+		\pgfmath@namedef{pgfmath#1@}{#2}%
 	\fi%
 }
 
@@ -166,20 +164,12 @@
 			\expandafter\pgfmath@local@function@@body\pgfmath@local@args,,%
 		\fi%
 		\xdef\pgfmath@local@temp{%
-			\noexpand\pgfmathnotifynewdeclarefunction{\pgfmath@local@name}{\the\c@pgf@counta}%
-				{\the\pgfmath@toks}%
+			\noexpand\pgfmathdeclarefunction{\pgfmath@local@name}{\the\c@pgf@counta}%
+				{\noexpand\pgfmathparse{\the\pgfmath@toks}}%
 		}%
 	\endgroup%
 	\pgfmath@local@temp%
 }
-
-% #1: the name
-% #2: the number of arguments <n>
-% #3: a math expression containing '#1', '#2', ... ,'#'<n>
-% This callback is overwritten by pgflibraryluamath.
-\def\pgfmathnotifynewdeclarefunction#1#2#3{%
-	\pgfmathdeclarefunction{#1}{#2}{\pgfmathparse{#3}}%
-}%
 
 \def\pgfmath@local@function@@body#1,{%
 	\def\pgfmath@local@test{#1}%
@@ -248,10 +238,3 @@
 \input pgfmathfunctions.base.code.tex 
 \input pgfmathfunctions.round.code.tex 
 \input pgfmathfunctions.misc.code.tex 
-\input pgfmathfunctions.integerarithmetics.code.tex
-
-
-
-% Local Variables:
-% tab-width: 2
-% End:
