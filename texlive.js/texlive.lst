@@ -50,7 +50,9 @@
 /texmf-dist/tex/latex/amscls/.
 /texmf-dist/tex/latex/ltxmisc/.
 /texmf-dist/tex/latex/amsmath/.
+/texmf-dist/tex/latex/anyfontsize/.
 /texmf-dist/tex/latex/natbib/.
+/texmf-dist/tex/latex/forloop/.
 /texmf-dist/tex/latex/dvipdfmx-def/.
 /texmf-dist/tex/latex/xcolor/.
 /texmf-dist/tex/latex/pslatex/.
@@ -801,8 +803,10 @@
 /texmf-dist/tex/latex/amsmath/amscd.sty
 /texmf-dist/tex/latex/amsmath/amsgen.sty
 /texmf-dist/tex/latex/amsmath/amsmath.sty
+/texmf-dist/tex/latex/anyfontsize/anyfontsize.sty
 /texmf-dist/tex/latex/natbib/bibentry.sty
 /texmf-dist/tex/latex/natbib/natbib.sty
+/texmf-dist/tex/latex/forloop/forloop.sty
 /texmf-dist/tex/latex/dvipdfmx-def/dvipdfmx.def
 /texmf-dist/tex/latex/xcolor/xcolor.sty
 /texmf-dist/tex/latex/pslatex/pslatex.sty

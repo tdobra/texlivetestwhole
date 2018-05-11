@@ -3656,6 +3656,7 @@ ae
 amscls
 amsfonts
 amsmath
+anyfontsize
 babelbib
 base
 carlisle
@@ -3664,6 +3665,7 @@ dvipdfmx-def
 etex-pkg
 fancyhdr
 fix2col
+forloop
 geometry
 graphics
 hyperref
@@ -3733,6 +3735,9 @@ amsopn.sty
 amstex.sty
 amstext.sty
 amsxtra.sty
+
+./tex/latex/anyfontsize:
+anyfontsize.sty
 
 ./tex/latex/babelbib:
 afrikaans.bdf
@@ -3941,6 +3946,9 @@ fancyheadings.sty
 
 ./tex/latex/fix2col:
 fix2col.sty
+
+./tex/latex/forloop:
+forloop.sty
 
 ./tex/latex/geometry:
 geometry.sty
