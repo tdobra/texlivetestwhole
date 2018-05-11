@@ -8,7 +8,7 @@
   <script src="promisejs/promise.js"></script>
   <script src="texlive.js/pdftex.js"></script>
 	
-	<p>Manual timestamp: 11/5/18 15:56:15</p>
+	<p>Manual timestamp: 11/5/18 21:35:55</p>
 	
 	    <h2>
 	      Usage
@@ -37,7 +37,8 @@
 	          LaTeX Input
 	        </h3>
 	        <button id="compile" autofocus>Compile this LaTeX code to a PDF</button>
-	        <a class="FlattrButton" style="display:none;" rev="flattr;button:compact;" href="http://github.com/manuels/texlive.js"></a>
+
+					<p>Input LaTeX<input id="LaTeXFile" type="file" accept="*.tex" /></p>
 
 	        <button onclick="TogetherJS(this); return false;">Start Collaboration Mode</button>
 	        <textarea rows="30" id="input">
@@ -160,8 +161,13 @@
 	      }
 
 	      document.getElementById("compile").addEventListener("click", function(e) {
-	        var source_code = document.getElementById("input").value;
-	        compile(source_code);
+	        //var source_code = document.getElementById("input").value;
+					var source_code;
+					var freader = new FileReader();
+					freader.onload = function () {
+						compile(freader.result);
+					};
+					freader.readAsText(document.getElementById("LaTeXFile").files[0]);
 	      });
 
 	      // document.getElementById("open_pdf_btn").addEventListener("click", function(e) {
