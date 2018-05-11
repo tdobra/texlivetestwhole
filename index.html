@@ -174,33 +174,33 @@
 				//Load each resource file
 				//pdftex.FS_createLazyFile('/', 'snowden.jpg', 'snowden.jpg', true, true);
 				//Read them using promises
-				promiseArray = fileArray.map(function(fileobj, pdftex) {
-					return new Promise(function(resolve, reject) {
-						var filename = fileobj.name;
-						var freader = new FileReader();
-						freader.onload = function() {
-							//pdftex.FS_createDataFile('/', filename, freader.result, true, false);
-							//pdftex.FS_createLazyFile('/', filename, freader.result, true, false);
-							resolve();
-						};
-						freader.onerror = reject;
-						//freader.readAsArrayBuffer(fileobj);
-						freader.readAsDataURL(fileobj);
-					});
-					Promise.all(promiseArray).then(function(result) {
-						console.log("Resources read")
+				// promiseArray = fileArray.map(function(fileobj, pdftex) {
+// 					return new Promise(function(resolve, reject) {
+// 						var filename = fileobj.name;
+// 						var freader = new FileReader();
+// 						freader.onload = function() {
+// 							//pdftex.FS_createDataFile('/', filename, freader.result, true, false);
+// 							//pdftex.FS_createLazyFile('/', filename, freader.result, true, false);
+// 							resolve();
+// 						};
+// 						freader.onerror = reject;
+// 						//freader.readAsArrayBuffer(fileobj);
+// 						freader.readAsDataURL(fileobj);
+// 					});
+// 					Promise.all(promiseArray).then(function(result) {
+// 						console.log("Resources read")
 						//Compile
 						freader = new FileReader();
 						freader.onload = function () {
 							compile(freader.result);
 						};
 						freader.readAsText(document.getElementById("LaTeXFile").files[0]);
-					}).catch(function(msg) {
-						alert("Error reading file: " + msg);
-						//Return buttons to normal state
-						startBtn.disabled = false;
-						abortReadBtn.disabled = true;
-					});
+					// }).catch(function(msg) {
+// 						alert("Error reading file: " + msg);
+// 						//Return buttons to normal state
+// 						startBtn.disabled = false;
+// 						abortReadBtn.disabled = true;
+// 					});
 					
 
 				// });
