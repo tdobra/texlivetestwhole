@@ -8,7 +8,7 @@
 	<script src="promisejs/promise.js"></script>
 	<script src="texlive.js/pdftex.js"></script>
 	
-	<p>Manual timestamp: 11/5/18 22:14:55</p>
+	<p>Manual timestamp: 11/5/18 22:23:08</p>
 	
 	<h2>
 		Usage
@@ -179,11 +179,13 @@
 						var filename = fileobj.name;
 						var freader = new FileReader();
 						freader.onload = function() {
-							pdftex.FS_createDataFile('/', filename, freader.result, true, false);
+							//pdftex.FS_createDataFile('/', filename, freader.result, true, false);
+							pdftex.FS_createLazyFile('/', filename, freader.result, true, false);
 							resolve();
 						};
 						freader.onerror = reject;
-						freader.readAsArrayBuffer(fileobj);
+						//freader.readAsArrayBuffer(fileobj);
+						freader.readAsDataURL(fileobj);
 					});
 					Promise.all(promiseArray).then(function(result) {
 						//Compile
