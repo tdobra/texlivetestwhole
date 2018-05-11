@@ -138,9 +138,9 @@
 			showLoadingIndicator(true);
 			window.location.href = "#running";
 
-			// var pdftex = new PDFTeX("texlive.js/pdftex-worker.js");
-// 			pdftex.set_TOTAL_MEMORY(80*1024*1024).then(function() {
-				//pdftex.FS_createLazyFile('/', 'snowden.jpg', 'snowden.jpg', true, true);
+			var pdftex = new PDFTeX("texlive.js/pdftex-worker.js");
+ 			pdftex.set_TOTAL_MEMORY(80*1024*1024).then(function() {
+				pdftex.FS_createLazyFile('/', 'snowden.jpg', 'snowden.jpg', true, true);
 
 				pdftex.on_stdout = appendOutput;
 				pdftex.on_stderr = appendOutput;
@@ -169,8 +169,8 @@
 			var freader = new FileReader();
 			var fileArray = [document.getElementById("resourceFile1").files[0], document.getElementById("resourceFile2").files[0], document.getElementById("resourceFile3").files[0]];
 			
-			var pdftex = new PDFTeX("texlive.js/pdftex-worker.js");
-			pdftex.set_TOTAL_MEMORY(80*1024*1024).then(function() {					
+			// var pdftex = new PDFTeX("texlive.js/pdftex-worker.js");
+			// pdftex.set_TOTAL_MEMORY(80*1024*1024).then(function() {
 				//Load each resource file
 				//pdftex.FS_createLazyFile('/', 'snowden.jpg', 'snowden.jpg', true, true);
 				//Read them using promises
@@ -180,7 +180,7 @@
 						var freader = new FileReader();
 						freader.onload = function() {
 							//pdftex.FS_createDataFile('/', filename, freader.result, true, false);
-							pdftex.FS_createLazyFile('/', filename, freader.result, true, false);
+							//pdftex.FS_createLazyFile('/', filename, freader.result, true, false);
 							resolve();
 						};
 						freader.onerror = reject;
@@ -202,7 +202,7 @@
 					});
 					
 
-				});
+				// });
 			});
 			// document.getElementById("open_pdf_btn").addEventListener("click", function(e) {
 				// 	        window.open(pdf_dataurl);
