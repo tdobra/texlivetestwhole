@@ -163,57 +163,88 @@
 				});
 			});
 		}
-
-		document.getElementById("compile").addEventListener("click", function(e) {
-			//var source_code = document.getElementById("input").value;
-			var source_code, promiseArray, freader;
-			var freader = new FileReader();
-			var fileArray = [document.getElementById("resourceFile1").files[0], document.getElementById("resourceFile2").files[0], document.getElementById("resourceFile3").files[0]];
+		
+    document.getElementById("compile").addEventListener("click", function(e) {
+			var source_code, promiseArray, sourcefreader, resourceFileArray, promiseArray, resourceURLs, resourceNames;
+			resourceFileArray = [document.getElementById("resourceFile1").files[0], document.getElementById("resourceFile2").files[0], document.getElementById("resourceFile3").files[0]];
 			
-			// var pdftex = new PDFTeX("texlive.js/pdftex-worker.js");
-			// pdftex.set_TOTAL_MEMORY(80*1024*1024).then(function() {
-				//Load each resource file
-				//pdftex.FS_createLazyFile('/', 'snowden.jpg', 'snowden.jpg', true, true);
-				//Read them using promises
-				// promiseArray = fileArray.map(function(fileobj, pdftex) {
-// 					return new Promise(function(resolve, reject) {
-// 						var filename = fileobj.name;
-// 						var freader = new FileReader();
-// 						freader.onload = function() {
-// 							//pdftex.FS_createDataFile('/', filename, freader.result, true, false);
-// 							//pdftex.FS_createLazyFile('/', filename, freader.result, true, false);
-// 							resolve();
-// 						};
-// 						freader.onerror = reject;
-// 						//freader.readAsArrayBuffer(fileobj);
-// 						freader.readAsDataURL(fileobj);
-// 					});
-// 					Promise.all(promiseArray).then(function(result) {
-// 						console.log("Resources read")
-						//Compile
-						freader = new FileReader();
-						freader.onload = function () {
-							var freader1 = new FileReader();
-							freader1.onload = function() {
-								compile(freader.result, [freader1.result], [fileArray[0].name]);
-							};
-							freader1.readAsDataURL(fileArray[0]);
-						};
-						freader.readAsText(document.getElementById("LaTeXFile").files[0]);
-					// }).catch(function(msg) {
-// 						alert("Error reading file: " + msg);
-// 						//Return buttons to normal state
-// 						startBtn.disabled = false;
-// 						abortReadBtn.disabled = true;
-// 					});
-					
-
-				// });
-			// });
-			// document.getElementById("open_pdf_btn").addEventListener("click", function(e) {
-				// 	        window.open(pdf_dataurl);
-				// 	        e.preventDefault();
+			//Load each resource file and get a URL for each
+			//Read them using promises
+			promiseArray = resourceFileArray.map(function(fileobj) {
+								return new Promise(function(resolve, reject) {
+									var filename = fileobj.name;
+									var freader = new FileReader();
+									freader.onload = function() {
+										resolve(this.result);
+									};
+									freader.onerror = reject;
+									freader.readAsDataURL(fileobj);
+								});
+								});
+			resourceNames = resourceFileArray.map(function(fileobj) { return fileobj.name; });
+			Promise.all(promiseArray).then(function(result) {
+				resourceURLs = result.slice(0);
+				console.log("Resources read");
+			
+				//Load source code
+				sourcefreader = new FileReader();
+				sourcefreader.onload = function() {
+					compile(this.result, resourceURLs, resourceNames);
+				};
+				sourcefreader.readAsText(document.getElementById("LaTeXFile").files[0]);
 			});
+    });
+
+		document// .getElementById("compile").addEventListener("click", function(e) {
+// 			//var source_code = document.getElementById("input").value;
+// 			var source_code, promiseArray, freader;
+// 			var freader = new FileReader();
+// 			var fileArray = [document.getElementById("resourceFile1").files[0], document.getElementById("resourceFile2").files[0], document.getElementById("resourceFile3").files[0]];
+//
+// 			// var pdftex = new PDFTeX("texlive.js/pdftex-worker.js");
+// 			// pdftex.set_TOTAL_MEMORY(80*1024*1024).then(function() {
+// 				//Load each resource file
+// 				//pdftex.FS_createLazyFile('/', 'snowden.jpg', 'snowden.jpg', true, true);
+// 				//Read them using promises
+// 				// promiseArray = fileArray.map(function(fileobj, pdftex) {
+// // 					return new Promise(function(resolve, reject) {
+// // 						var filename = fileobj.name;
+// // 						var freader = new FileReader();
+// // 						freader.onload = function() {
+// // 							//pdftex.FS_createDataFile('/', filename, freader.result, true, false);
+// // 							//pdftex.FS_createLazyFile('/', filename, freader.result, true, false);
+// // 							resolve();
+// // 						};
+// // 						freader.onerror = reject;
+// // 						//freader.readAsArrayBuffer(fileobj);
+// // 						freader.readAsDataURL(fileobj);
+// // 					});
+// // 					Promise.all(promiseArray).then(function(result) {
+// // 						console.log("Resources read")
+// 						//Compile
+// 						freader = new FileReader();
+// 						freader.onload = function () {
+// 							var freader1 = new FileReader();
+// 							freader1.onload = function() {
+// 								compile(freader.result, [freader1.result], [fileArray[0].name]);
+// 							};
+// 							freader1.readAsDataURL(fileArray[0]);
+// 						};
+// 						freader.readAsText(document.getElementById("LaTeXFile").files[0]);
+// 					// }).catch(function(msg) {
+// // 						alert("Error reading file: " + msg);
+// // 						//Return buttons to normal state
+// // 						startBtn.disabled = false;
+// // 						abortReadBtn.disabled = true;
+// // 					});
+//
+//
+// 				// });
+// 			// });
+// 			// document.getElementById("open_pdf_btn").addEventListener("click", function(e) {
+// 				// 	        window.open(pdf_dataurl);
+// 				// 	        e.preventDefault();
+// 			});
 
 			var pdftex_preload = new PDFTeX("texlive.js/pdftex-worker.js");
 			pdftex_preload = undefined;
